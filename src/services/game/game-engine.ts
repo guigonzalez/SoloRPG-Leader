@@ -4,7 +4,7 @@ import { buildSystemPrompt } from '../ai/prompt-builder';
 import { assembleContext, parseSuggestedActions } from '../ai/context-assembler';
 import { getAIProvider } from '../storage/api-key-storage';
 import { getCurrentLanguage } from '../i18n/use-i18n';
-import type { Campaign, Message, Entity, Fact, Recap, SuggestedAction } from '../../types/models';
+import type { Campaign, Message, Entity, Fact, Recap, SuggestedAction, Leader, DecisionImpact, NationStateImpact } from '../../types/models';
 import type { ClaudeMessage } from '../../types/api';
 
 export interface GameEngineContext {
@@ -13,11 +13,15 @@ export interface GameEngineContext {
   recap: Recap | null;
   entities: Entity[];
   facts: Fact[];
+  leader?: Leader | null;
 }
 
 export interface AIResponse {
   content: string;
   suggestedActions: SuggestedAction[];
+  impact?: DecisionImpact | null;
+  nationImpact?: NationStateImpact | null;
+  impactSummary?: string | null;
   usedFallback?: boolean;
 }
 
@@ -69,7 +73,8 @@ export class GameEngine {
         context.campaign,
         context.recap,
         context.entities,
-        context.facts
+        context.facts,
+        context.leader ?? null
       );
 
       const claudeMessages = assembleContext(context.messages);
@@ -81,11 +86,14 @@ export class GameEngine {
         onChunk
       );
 
-      const { cleanContent, actions } = parseSuggestedActions(rawContent);
+      const { cleanContent, actions, impact, nationImpact, impactSummary } = parseSuggestedActions(rawContent);
 
       return {
         content: cleanContent,
         suggestedActions: actions,
+        impact: impact ?? undefined,
+        nationImpact: nationImpact ?? undefined,
+        impactSummary: impactSummary ?? undefined,
       };
     } catch (error) {
       console.error('AI response failed, using fallback:', error);

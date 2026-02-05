@@ -3,7 +3,7 @@ import { Button } from '../common/Button';
 import { Input } from '../common/Input';
 import { Card } from '../common/Card';
 import { validateCampaignTitle, validateCampaignTheme, validateCampaignTone } from '../../utils/validation';
-import { generateMysterySuggestion } from '../../services/ai/campaign-generator';
+import { generateScenarioSuggestion } from '../../services/ai/campaign-generator';
 import { t } from '../../services/i18n/use-i18n';
 import type { NewCampaign, Difficulty } from '../../types/models';
 
@@ -12,10 +12,11 @@ interface CampaignCreateProps {
   onCancel: () => void;
 }
 
-const MYSTERY_STYLE_IDS = ['christie', 'holmes', 'express', 'rural', 'noir'] as const;
+const SCENARIO_STYLE_IDS = ['economic', 'war', 'pandemic', 'election', 'diplomatic', 'social', 'military'] as const;
 
 export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreateProps) {
   const [title, setTitle] = useState('');
+  const [nation, setNation] = useState('');
   const [style, setStyle] = useState('');
   const [theme, setTheme] = useState('');
   const [tone, setTone] = useState('');
@@ -29,8 +30,9 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
     setErrors({});
 
     try {
-      const suggestion = await generateMysterySuggestion(style || 'christie');
+      const suggestion = await generateScenarioSuggestion(style || 'economic');
       setTitle(suggestion.title);
+      setNation(suggestion.nation || '');
       setTheme(suggestion.theme);
       setTone(suggestion.tone);
     } catch (error) {
@@ -61,7 +63,7 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
     try {
       await onCreateCampaign({
         title,
-        system: 'Detective',
+        nation: nation || title,
         theme,
         tone,
         difficulty,
@@ -94,6 +96,13 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
                 placeholder={t('campaignCreation.campaignTitlePlaceholder')}
                 required
               />
+
+              <Input
+                label={t('campaignCreation.nation')}
+                value={nation}
+                onChange={(e) => setNation(e.target.value)}
+                placeholder={t('campaignCreation.nationPlaceholder')}
+              />
               {errors.title && (
                 <div style={{ color: 'var(--color-accent)', fontSize: '12px', marginTop: '-8px', marginBottom: '8px' }}>
                   {errors.title}
@@ -102,7 +111,7 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
 
               <div className="form-group">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label className="form-label" style={{ margin: 0 }}>{t('campaignCreation.mysteryStyle')}</label>
+                  <label className="form-label" style={{ margin: 0 }}>{t('campaignCreation.scenarioType')}</label>
                   <button
                     type="button"
                     className="retro-button"
@@ -119,8 +128,8 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
                   onChange={(e) => setStyle(e.target.value)}
                 >
                   <option value="">{t('campaignCreation.selectStyle')}</option>
-                  {MYSTERY_STYLE_IDS.map((id) => (
-                    <option key={id} value={id}>{t(`campaignCreation.mysteryStyles.${id}`)}</option>
+                  {SCENARIO_STYLE_IDS.map((id) => (
+                    <option key={id} value={id}>{t(`campaignCreation.scenarioTypes.${id}`)}</option>
                   ))}
                 </select>
               </div>

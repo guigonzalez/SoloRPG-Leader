@@ -76,9 +76,34 @@ export interface Translations {
     startFallback: string;
   };
 
+  leader: {
+    defaultTitle: string;
+    profilePending: string;
+    lastDecisionImpact: string;
+    politicalProfile: string;
+    nationWellbeing: string;
+    axis: Record<'economic' | 'social' | 'governance' | 'military' | 'diplomatic', { left: string; right: string }>;
+    axisShort: Record<'economic' | 'social' | 'governance' | 'military' | 'diplomatic', string>;
+    nationState: {
+      stability: string;
+      economy: string;
+      wellbeing: string;
+      inequality: string;
+      internationalStanding: string;
+    };
+    nationStateShort: Record<'stability' | 'economy' | 'wellbeing' | 'inequality' | 'internationalStanding', string>;
+  };
+
   gameOver: {
     title: string;
     message: string;
+    returnToCampaigns: string;
+  };
+
+  reignSummary: {
+    title: string;
+    mandateSummary: string;
+    closingMessage: string;
     returnToCampaigns: string;
   };
 
@@ -97,6 +122,9 @@ export interface Translations {
     subtitle: string;
     campaignTitle: string;
     campaignTitlePlaceholder: string;
+    nation: string;
+    nationPlaceholder: string;
+    scenarioType: string;
     mysteryStyle: string;
     generateWithAI: string;
     generating: string;
@@ -117,6 +145,7 @@ export interface Translations {
     creating: string;
     generateFailed: string;
     mysteryStyles: Record<string, string>;
+    scenarioTypes: Record<string, string>;
   };
 
   // Campaign Tones
@@ -184,14 +213,14 @@ export interface Translations {
   // Sidebar
     sidebar: {
       gameInfo: string;
-    menu: string;
-    endSession: string;
-    character: string;
-    arrest: string;
-    recap: string;
-    entities: string;
-    notes: string;
-  };
+      menu: string;
+      endSession: string;
+      character: string;
+      leader: string;
+      recap: string;
+      entities: string;
+      notes: string;
+    };
 
   // Arrest Panel (Voz de Prisão)
   arrest: {
@@ -237,6 +266,12 @@ export interface Translations {
     evidence: string;
     faction: string;
     other: string;
+    country: string;
+    organization: string;
+    politician: string;
+    institution: string;
+    character: string;
+    npc: string;
   };
 
   // Notes Panel
@@ -422,14 +457,14 @@ export const translations: Record<Language, Translations> = {
     },
 
     landing: {
-      badge: 'Detective Mystery Solo',
-      title: 'Solo Detective',
-      tagline: 'Investigate. Deduce. Solve.',
-      description: 'Solve murder mysteries solo with an AI narrator. Choose from 20 ready-to-play cases or create your own. Investigate, interrogate suspects, and crack the case.',
-      quickStartCta: 'Start Playing Now',
+      badge: 'Nation Leadership Solo',
+      title: 'SoloRPG Leader',
+      tagline: 'Govern. Decide. Face the consequences.',
+      description: 'Assume the role of a nation\'s leader. An AI narrator presents crises, strikes, wars, and elections. Every decision shapes your political profile and the well-being of your people. There are no easy answers.',
+      quickStartCta: 'Start Your Mandate',
       tutorialCta: 'Tutorial (no API key needed)',
-      createCustom: 'Create Custom Case',
-      firstTimeHint: 'New here? Click above to jump into a ready-made mystery in seconds.',
+      createCustom: 'Create Custom Scenario',
+      firstTimeHint: 'New here? Click above to jump into a ready-made crisis in seconds.',
     },
 
     campaignList: {
@@ -453,19 +488,55 @@ export const translations: Record<Language, Translations> = {
       all: 'All',
       play: 'Play',
       noResults: 'No campaigns match your search.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir', cozy: 'Cozy', spy: 'Spy', supernatural: 'Supernatural', historical: 'Historical', locked: 'Locked Room', heist: 'Heist' },
+      tags: { economic: 'Economic', war: 'War', pandemic: 'Pandemic', election: 'Election', diplomatic: 'Diplomatic', social: 'Social', military: 'Military' },
       campaigns: PRESET_CAMPAIGNS_EN,
     },
 
     campaign: {
-      endSessionConfirm: 'End this session? This will save your progress and extract important clues from your investigation.',
+      endSessionConfirm: 'End your mandate? You will see a summary of your leadership and the impact of your decisions.',
       sessionSaved: 'Session ended! Your progress has been saved.',
-      startFallback: 'Welcome to your investigation.\n\nTheme: {theme}\nTone: {tone}\n\nThe case awaits. What would you like to do?',
+      startFallback: 'Welcome to your mandate.\n\nTheme: {theme}\nTone: {tone}\n\nThe nation awaits your decisions. What would you like to do?',
+    },
+    leader: {
+      defaultTitle: 'Leader',
+      profilePending: 'Start your mandate to see your political profile.',
+      lastDecisionImpact: 'Last decision impact',
+      politicalProfile: 'Political profile',
+      nationWellbeing: 'Nation well-being',
+      axis: {
+        economic: { left: 'Left', right: 'Right' },
+        social: { left: 'Conservative', right: 'Progressive' },
+        governance: { left: 'Democrat', right: 'Authoritarian' },
+        military: { left: 'Civil', right: 'Militarist' },
+        diplomatic: { left: 'Isolationist', right: 'Internationalist' },
+      },
+      axisShort: { economic: 'Econ', social: 'Social', governance: 'Gov', military: 'Mil', diplomatic: 'Dipl' },
+      nationState: {
+        stability: 'Stability',
+        economy: 'Economy',
+        wellbeing: 'Social welfare',
+        inequality: 'Inequality',
+        internationalStanding: 'International standing',
+      },
+      nationStateShort: {
+        stability: 'Stability',
+        economy: 'Economy',
+        wellbeing: 'Welfare',
+        inequality: 'Inequality',
+        internationalStanding: 'Standing',
+      },
     },
 
     gameOver: {
       title: 'Game Over',
       message: 'Your character has fallen. Hit points reached zero.',
+      returnToCampaigns: 'Return to campaigns',
+    },
+
+    reignSummary: {
+      title: 'End of Mandate',
+      mandateSummary: 'Mandate Summary',
+      closingMessage: 'Every decision had consequences. History will judge your choices.',
       returnToCampaigns: 'Return to campaigns',
     },
 
@@ -478,10 +549,13 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaignCreation: {
-      title: 'Create New Campaign',
-      subtitle: 'Create a custom mystery case',
-      campaignTitle: 'Campaign Title',
-      campaignTitlePlaceholder: 'e.g. Murder at Blackwood Hall',
+      title: 'Create New Mandate',
+      subtitle: 'Create a custom nation leadership scenario',
+      campaignTitle: 'Mandate Title',
+      campaignTitlePlaceholder: 'e.g. The Recession',
+      nation: 'Nation',
+      nationPlaceholder: 'e.g. Democratic Republic',
+      scenarioType: 'Scenario Type',
       mysteryStyle: 'Mystery Style',
       generateWithAI: 'Generate with AI',
       generating: 'Generating...',
@@ -507,6 +581,15 @@ export const translations: Record<Language, Translations> = {
         express: 'Orient Express (Train)',
         rural: 'Rural Mystery (Village)',
         noir: 'Detective Noir (1940s)',
+      },
+      scenarioTypes: {
+        economic: 'Economic Crisis',
+        war: 'War / Military',
+        pandemic: 'Pandemic / Health',
+        election: 'Election',
+        diplomatic: 'Diplomatic',
+        social: 'Social Unrest',
+        military: 'Military / Coup',
       },
     },
 
@@ -569,11 +652,11 @@ export const translations: Record<Language, Translations> = {
     },
 
     sidebar: {
-      gameInfo: 'Case Info',
+      gameInfo: 'Mandate Info',
       menu: 'Menu',
-      endSession: 'End Session',
+      endSession: 'End Mandate',
       character: 'Character',
-      arrest: 'Arrest',
+      leader: 'Leader',
       recap: 'Recap',
       entities: 'Entities',
       notes: 'Notes',
@@ -612,14 +695,20 @@ export const translations: Record<Language, Translations> = {
     entitiesPanel: {
       title: 'Known Entities',
       noEntities: 'No entities discovered yet',
-      empty: 'Suspects, investigators, places and evidence will appear here...',
-      updateHint: 'Click "Update" in the Recap tab to extract suspects and clues from your investigation!',
+      empty: 'Countries, organizations, politicians and key figures will appear here...',
+      updateHint: 'Click "Update" in the Recap tab to extract entities from your mandate!',
       suspect: 'Suspect',
       investigator: 'Investigator',
       place: 'Place',
       evidence: 'Evidence',
       faction: 'Faction',
       other: 'Other',
+      country: 'Country',
+      organization: 'Organization',
+      politician: 'Politician',
+      institution: 'Institution',
+      character: 'Character',
+      npc: 'Figure',
     },
 
     notesPanel: {
@@ -820,14 +909,14 @@ export const translations: Record<Language, Translations> = {
     },
 
     landing: {
-      badge: 'Detetive Solo com IA',
-      title: 'Solo Detective',
-      tagline: 'Investigue. Deduza. Resolva.',
-      description: 'Resolva mistérios de assassinato sozinho com um narrador de IA. Escolha entre 20 casos prontos ou crie o seu. Investigue, interrogue suspeitos e desvende o caso.',
-      quickStartCta: 'Jogar Agora',
+      badge: 'Liderança de Nação Solo',
+      title: 'SoloRPG Leader',
+      tagline: 'Governar. Decidir. Enfrentar as consequências.',
+      description: 'Assuma o papel de líder de uma nação. Um narrador de IA apresenta crises, greves, guerras e eleições. Cada decisão molda seu perfil político e o bem-estar do seu povo. Não há respostas fáceis.',
+      quickStartCta: 'Iniciar Seu Mandato',
       tutorialCta: 'Tutorial (sem chave de API)',
-      createCustom: 'Criar Caso Personalizado',
-      firstTimeHint: 'Novo por aqui? Clique acima para começar um mistério pronto em segundos.',
+      createCustom: 'Criar Cenário Personalizado',
+      firstTimeHint: 'Novo por aqui? Clique acima para entrar em uma crise pronta em segundos.',
     },
 
     campaignList: {
@@ -851,19 +940,55 @@ export const translations: Record<Language, Translations> = {
       all: 'Todas',
       play: 'Jogar',
       noResults: 'Nenhuma campanha encontrada.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Expresso', rural: 'Rural', noir: 'Noir', cozy: 'Aconchegante', spy: 'Espionagem', supernatural: 'Sobrenatural', historical: 'Histórico', locked: 'Quarto Fechado', heist: 'Roubo' },
+      tags: { economic: 'Econômico', war: 'Guerra', pandemic: 'Pandemia', election: 'Eleição', diplomatic: 'Diplomático', social: 'Social', military: 'Militar' },
       campaigns: PRESET_CAMPAIGNS_PT,
     },
 
     campaign: {
-      endSessionConfirm: 'Encerrar esta sessão? Isso salvará seu progresso e extrairá pistas importantes da sua investigação.',
+      endSessionConfirm: 'Encerrar seu mandato? Você verá um resumo de sua liderança e o impacto de suas decisões.',
       sessionSaved: 'Sessão encerrada! Seu progresso foi salvo.',
-      startFallback: 'Bem-vindo à sua investigação.\n\nTema: {theme}\nTom: {tone}\n\nO caso aguarda. O que você gostaria de fazer?',
+      startFallback: 'Bem-vindo ao seu mandato.\n\nTema: {theme}\nTom: {tone}\n\nA nação aguarda suas decisões. O que você gostaria de fazer?',
+    },
+    leader: {
+      defaultTitle: 'Líder',
+      profilePending: 'Inicie seu mandato para ver seu perfil político.',
+      lastDecisionImpact: 'Impacto da última decisão',
+      politicalProfile: 'Perfil político',
+      nationWellbeing: 'Bem-estar da nação',
+      axis: {
+        economic: { left: 'Esquerda', right: 'Direita' },
+        social: { left: 'Conservador', right: 'Progressista' },
+        governance: { left: 'Democrata', right: 'Ditador' },
+        military: { left: 'Civil', right: 'Militarista' },
+        diplomatic: { left: 'Isolacionista', right: 'Internacionalista' },
+      },
+      axisShort: { economic: 'Econ', social: 'Social', governance: 'Gov', military: 'Mil', diplomatic: 'Dipl' },
+      nationState: {
+        stability: 'Estabilidade',
+        economy: 'Economia',
+        wellbeing: 'Bem-estar social',
+        inequality: 'Desigualdade',
+        internationalStanding: 'Prestígio internacional',
+      },
+      nationStateShort: {
+        stability: 'Estab.',
+        economy: 'Economia',
+        wellbeing: 'Bem-estar',
+        inequality: 'Desigual.',
+        internationalStanding: 'Prestígio',
+      },
     },
 
     gameOver: {
       title: 'Game Over',
       message: 'Seu personagem caiu. Os pontos de vida chegaram a zero.',
+      returnToCampaigns: 'Voltar às campanhas',
+    },
+
+    reignSummary: {
+      title: 'Fim do Mandato',
+      mandateSummary: 'Resumo do Mandato',
+      closingMessage: 'Toda decisão teve consequências. A história julgará suas escolhas.',
       returnToCampaigns: 'Voltar às campanhas',
     },
 
@@ -878,8 +1003,11 @@ export const translations: Record<Language, Translations> = {
     campaignCreation: {
       title: 'Criar Nova Campanha',
       subtitle: 'Crie um caso de mistério personalizado',
-      campaignTitle: 'Título da Campanha',
-      campaignTitlePlaceholder: 'ex: Assassinato na Mansão Blackwood',
+      campaignTitle: 'Título do Mandato',
+      campaignTitlePlaceholder: 'ex: A Recessão',
+      nation: 'Nação',
+      nationPlaceholder: 'ex: República Democrática',
+      scenarioType: 'Tipo de Cenário',
       mysteryStyle: 'Estilo do Mistério',
       generateWithAI: 'Gerar com IA',
       generating: 'Gerando...',
@@ -905,6 +1033,15 @@ export const translations: Record<Language, Translations> = {
         express: 'Expresso Oriente (Trem)',
         rural: 'Mistério Rural (Vila)',
         noir: 'Detective Noir (Anos 40)',
+      },
+      scenarioTypes: {
+        economic: 'Crise Econômica',
+        war: 'Guerra / Militar',
+        pandemic: 'Pandemia / Saúde',
+        election: 'Eleição',
+        diplomatic: 'Diplomático',
+        social: 'Instabilidade Social',
+        military: 'Militar / Golpe',
       },
     },
 
@@ -967,11 +1104,11 @@ export const translations: Record<Language, Translations> = {
     },
 
     sidebar: {
-      gameInfo: 'Info do Caso',
+      gameInfo: 'Info do Mandato',
       menu: 'Menu',
-      endSession: 'Encerrar Sessão',
+      endSession: 'Encerrar Mandato',
       character: 'Personagem',
-      arrest: 'Prisão',
+      leader: 'Líder',
       recap: 'Resumo',
       entities: 'Entidades',
       notes: 'Anotações',
@@ -1010,14 +1147,20 @@ export const translations: Record<Language, Translations> = {
     entitiesPanel: {
       title: 'Entidades Conhecidas',
       noEntities: 'Nenhuma entidade descoberta ainda',
-      empty: 'Suspeitos, investigadores, locais e evidências aparecerão aqui...',
-      updateHint: 'Clique em "Atualizar" na aba Resumo para extrair suspeitos e pistas da sua investigação!',
+      empty: 'Países, organizações, políticos e figuras-chave aparecerão aqui...',
+      updateHint: 'Clique em "Atualizar" na aba Resumo para extrair entidades do seu mandato!',
       suspect: 'Suspeito',
       investigator: 'Investigador',
       place: 'Local',
       evidence: 'Evidência',
       faction: 'Facção',
       other: 'Outro',
+      country: 'País',
+      organization: 'Organização',
+      politician: 'Político',
+      institution: 'Instituição',
+      character: 'Personagem',
+      npc: 'Figura',
     },
 
     notesPanel: {
@@ -1218,14 +1361,14 @@ export const translations: Record<Language, Translations> = {
     },
 
     landing: {
-      badge: 'Detective en Solitario con IA',
-      title: 'Solo Detective',
-      tagline: 'Investiga. Deduce. Resuelve.',
-      description: 'Resuelve misterios de asesinato en solitario con un narrador de IA. Elige entre 20 casos listos o crea el tuyo. Investiga, interroga sospechosos y resuelve el caso.',
-      quickStartCta: 'Jugar Ahora',
+      badge: 'Liderazgo de Nación en Solitario',
+      title: 'SoloRPG Leader',
+      tagline: 'Gobernar. Decidir. Enfrentar las consecuencias.',
+      description: 'Asume el papel de líder de una nación. Un narrador de IA presenta crisis, huelgas, guerras y elecciones. Cada decisión moldea tu perfil político y el bienestar de tu pueblo. No hay respuestas fáciles.',
+      quickStartCta: 'Iniciar Tu Mandato',
       tutorialCta: 'Tutorial (sin clave de API)',
-      createCustom: 'Crear Caso Personalizado',
-      firstTimeHint: '¿Nuevo aquí? Haz clic arriba para empezar un misterio listo en segundos.',
+      createCustom: 'Crear Escenario Personalizado',
+      firstTimeHint: '¿Nuevo aquí? Haz clic arriba para entrar en una crisis lista en segundos.',
     },
 
     campaignList: {
@@ -1249,19 +1392,55 @@ export const translations: Record<Language, Translations> = {
       all: 'Todas',
       play: 'Jugar',
       noResults: 'No hay campañas que coincidan.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Expreso', rural: 'Rural', noir: 'Noir', cozy: 'Acogedor', spy: 'Espionaje', supernatural: 'Sobrenatural', historical: 'Histórico', locked: 'Habitación Cerrada', heist: 'Robo' },
+      tags: { economic: 'Económico', war: 'Guerra', pandemic: 'Pandemia', election: 'Elección', diplomatic: 'Diplomático', social: 'Social', military: 'Militar' },
       campaigns: PRESET_CAMPAIGNS_ES,
     },
 
     campaign: {
-      endSessionConfirm: '¿Finalizar esta sesión? Esto guardará tu progreso y extraerá pistas importantes de tu investigación.',
+      endSessionConfirm: '¿Finalizar tu mandato? Verás un resumen de tu liderazgo y el impacto de tus decisiones.',
       sessionSaved: '¡Sesión finalizada! Tu progreso ha sido guardado.',
-      startFallback: 'Bienvenido a tu investigación.\n\nTema: {theme}\nTono: {tone}\n\nEl caso te espera. ¿Qué te gustaría hacer?',
+      startFallback: 'Bienvenido a tu mandato.\n\nTema: {theme}\nTono: {tone}\n\nLa nación espera tus decisiones. ¿Qué te gustaría hacer?',
+    },
+    leader: {
+      defaultTitle: 'Líder',
+      profilePending: 'Inicia tu mandato para ver tu perfil político.',
+      lastDecisionImpact: 'Impacto de la última decisión',
+      politicalProfile: 'Perfil político',
+      nationWellbeing: 'Bienestar de la nación',
+      axis: {
+        economic: { left: 'Izquierda', right: 'Derecha' },
+        social: { left: 'Conservador', right: 'Progresista' },
+        governance: { left: 'Demócrata', right: 'Autoritario' },
+        military: { left: 'Civil', right: 'Militarista' },
+        diplomatic: { left: 'Aislacionista', right: 'Internacionalista' },
+      },
+      axisShort: { economic: 'Econ', social: 'Social', governance: 'Gov', military: 'Mil', diplomatic: 'Dipl' },
+      nationState: {
+        stability: 'Estabilidad',
+        economy: 'Economía',
+        wellbeing: 'Bienestar social',
+        inequality: 'Desigualdad',
+        internationalStanding: 'Prestigio internacional',
+      },
+      nationStateShort: {
+        stability: 'Estab.',
+        economy: 'Economía',
+        wellbeing: 'Bienestar',
+        inequality: 'Desigual.',
+        internationalStanding: 'Prestigio',
+      },
     },
 
     gameOver: {
       title: 'Game Over',
       message: 'Tu personaje ha caído. Los puntos de vida llegaron a cero.',
+      returnToCampaigns: 'Volver a campañas',
+    },
+
+    reignSummary: {
+      title: 'Fin del Mandato',
+      mandateSummary: 'Resumen del Mandato',
+      closingMessage: 'Cada decisión tuvo consecuencias. La historia juzgará tus elecciones.',
       returnToCampaigns: 'Volver a campañas',
     },
 
@@ -1274,10 +1453,13 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaignCreation: {
-      title: 'Crear Nueva Campaña',
-      subtitle: 'Crea un caso de misterio personalizado',
-      campaignTitle: 'Título de la Campaña',
-      campaignTitlePlaceholder: 'ej: Asesinato en Blackwood Hall',
+      title: 'Crear Nuevo Mandato',
+      subtitle: 'Crea un escenario de liderazgo de nación',
+      campaignTitle: 'Título del Mandato',
+      campaignTitlePlaceholder: 'ej: La Recesión',
+      nation: 'Nación',
+      nationPlaceholder: 'ej: República Democrática',
+      scenarioType: 'Tipo de Escenario',
       mysteryStyle: 'Estilo del Misterio',
       generateWithAI: 'Generar con IA',
       generating: 'Generando...',
@@ -1303,6 +1485,15 @@ export const translations: Record<Language, Translations> = {
         express: 'Expreso de Oriente (Tren)',
         rural: 'Misterio Rural (Pueblo)',
         noir: 'Detective Noir (Años 40)',
+      },
+      scenarioTypes: {
+        economic: 'Crisis Económica',
+        war: 'Guerra / Militar',
+        pandemic: 'Pandemia / Salud',
+        election: 'Elección',
+        diplomatic: 'Diplomático',
+        social: 'Inestabilidad Social',
+        military: 'Militar / Golpe',
       },
     },
 
@@ -1365,11 +1556,11 @@ export const translations: Record<Language, Translations> = {
     },
 
     sidebar: {
-      gameInfo: 'Info del Caso',
+      gameInfo: 'Info del Mandato',
       menu: 'Menú',
-      endSession: 'Finalizar Sesión',
+      endSession: 'Finalizar Mandato',
       character: 'Personaje',
-      arrest: 'Arresto',
+      leader: 'Líder',
       recap: 'Resumen',
       entities: 'Entidades',
       notes: 'Notas',
@@ -1416,6 +1607,12 @@ export const translations: Record<Language, Translations> = {
       evidence: 'Evidencia',
       faction: 'Facción',
       other: 'Otro',
+      country: 'País',
+      organization: 'Organización',
+      politician: 'Político',
+      institution: 'Institución',
+      character: 'Personaje',
+      npc: 'Figura',
     },
 
     notesPanel: {

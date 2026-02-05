@@ -18,9 +18,10 @@ export async function getOrCreateOnboardingCampaign(): Promise<Campaign> {
   const now = Date.now();
   const campaign: Campaign = {
     id: ONBOARDING_CAMPAIGN_ID,
-    title: 'Tutorial: The Blackwood Case',
+    title: 'Tutorial: Your First Mandate',
+    nation: 'Tutorial Nation',
     system: 'Onboarding',
-    theme: 'A classic manor murder. Learn the mechanics.',
+    theme: 'A strike paralyzes the capital. Learn the mechanics of leadership.',
     tone: 'Tutorial, guided',
     difficulty: 'easy',
     createdAt: now,

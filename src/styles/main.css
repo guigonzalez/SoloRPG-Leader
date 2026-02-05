@@ -74,7 +74,7 @@
   align-self: flex-start;
   font-size: var(--font-size-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: rgba(114, 47, 55, 0.12);
+  background: rgba(30, 58, 95, 0.1);
   border: var(--border-width) solid var(--color-accent);
   color: var(--color-accent);
   text-transform: uppercase;

@@ -1,23 +1,35 @@
-# SoloRPG Detective
+# SoloRPG Leader
 
-Jogo de narrativa investigativa estilo Agatha Christie e Sherlock Holmes. A IA narra um caso de mistério; você é o detetive que investiga, interroga suspeitos e descobre pistas para identificar o **criminoso**, a **arma** e o **motivo**.
+Fork do [SoloRPG Detective](https://github.com/guigonzalez/SoloRPG-Detective) — jogo de **liderança de nação** com decisões sociais e geopolíticas.
 
-## Como funciona
+## Conceito
 
-- **Narrativa pura**: Sem dados, atributos ou rolagens. Apenas decisões narrativas.
-- **Investigação**: Explore cenários, interrogue suspeitos, examine evidências.
-- **Voz de Prisão**: Quando tiver uma teoria, use a sidebar para dar voz de prisão (suspeito, arma, motivo).
-- **3 tentativas**: Você tem no máximo 3 acusações erradas antes do criminoso escapar.
-- **Vitória**: Acertar criminoso, arma e motivo encerra o caso com sucesso.
+- **Jogador**: Líder de uma nação
+- **IA**: Apresenta cenários e desafios (não necessariamente sequenciais)
+- **Decisões**: Cada ação gera impacto em eixos políticos
+- **Perfil**: O jogador é avaliado como social, liberal, esquerda, direita, democrata, ditador, militar, etc.
+
+## Eixos Políticos
+
+| Eixo | Extremo A | Extremo B |
+|------|-----------|-----------|
+| Econômico | Esquerda (intervenção) | Direita (mercado livre) |
+| Social | Conservador | Progressista |
+| Governo | Democrata | Ditador |
+| Militar | Civil/Pacifista | Militarista |
+| Diplomático | Isolacionista | Internacionalista |
 
 ## Como rodar
 
 ```bash
-cd SoloRPG-Detective
 npm install
 npm run dev
 ```
 
-## Banco de dados
+## Setup
 
-Usa `solo-rpg-detective-db` (IndexedDB) — separado do SoloRPG original.
+Igual ao SoloRPG Detective: configure uma API key (Claude ou Gemini) em Configurações.
+
+## Origem
+
+Baseado no SoloRPG Detective. O universo de detetive foi substituído por simulação de liderança política.

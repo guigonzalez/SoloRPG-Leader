@@ -1,6 +1,6 @@
 import { RecapPanel } from './RecapPanel';
 import { EntitiesPanel } from './EntitiesPanel';
-import { ArrestPanel } from './ArrestPanel';
+import { LeaderProfilePanel } from './LeaderProfilePanel';
 import { NotesPanel } from './NotesPanel';
 import { useUIStore } from '../../store/ui-store';
 import { t } from '../../services/i18n/use-i18n';
@@ -10,13 +10,11 @@ interface SidebarProps {
   recap: Recap | null;
   entities: Entity[];
   campaignId: string;
-  maxArrestAttempts: number;
   notes: string;
+  messageCount?: number;
   onSaveNotes: (notes: string) => Promise<void>;
   onEndSession: () => void;
   onUpdateRecap: () => void;
-  onCaseSolved: (answer: { criminal: string; weapon: string; motive: string }) => void;
-  onCaseFailed: (answer?: { criminal: string; weapon: string; motive: string }) => void;
   isUpdatingRecap: boolean;
   isOpen?: boolean;
   onClose?: () => void;
@@ -26,13 +24,11 @@ export function Sidebar({
   recap,
   entities,
   campaignId,
-  maxArrestAttempts,
   notes,
+  messageCount = 0,
   onSaveNotes,
   onEndSession,
   onUpdateRecap,
-  onCaseSolved,
-  onCaseFailed,
   isUpdatingRecap,
   isOpen = false,
   onClose,
@@ -84,10 +80,10 @@ export function Sidebar({
 
       <div className="sidebar-tabs">
         <button
-          className={`sidebar-tab ${activePanel === 'arrest' ? 'active' : ''}`}
-          onClick={() => setActivePanel('arrest')}
+          className={`sidebar-tab ${activePanel === 'leader' ? 'active' : ''}`}
+          onClick={() => setActivePanel('leader')}
         >
-          {t('sidebar.arrest')}
+          {t('sidebar.leader')}
         </button>
         <button
           className={`sidebar-tab ${activePanel === 'recap' ? 'active' : ''}`}
@@ -110,13 +106,8 @@ export function Sidebar({
       </div>
 
       <div className="sidebar-content">
-        {activePanel === 'arrest' && (
-          <ArrestPanel
-            campaignId={campaignId}
-            maxAttempts={maxArrestAttempts}
-            onCaseSolved={onCaseSolved}
-            onCaseFailed={onCaseFailed}
-          />
+        {activePanel === 'leader' && (
+          <LeaderProfilePanel campaignId={campaignId} refreshTrigger={messageCount} />
         )}
         {activePanel === 'recap' && (
           <RecapPanel

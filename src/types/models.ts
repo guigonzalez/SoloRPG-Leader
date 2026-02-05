@@ -1,34 +1,56 @@
 /**
- * Core data models - SoloRPG Detective (investigative narrative)
+ * Core data models - SoloRPG Leader (nation leadership narrative)
  */
 
-export interface MysteryAnswer {
-  campaignId: string;
-  criminal: string;
-  weapon: string;
-  motive: string;
-  attemptsUsed: number; // Wrong arrests (max 3)
-  createdAt: number;
-}
-
-export interface SolvedAnswer {
-  criminal: string;
-  weapon: string;
-  motive: string;
-}
-
 export type Difficulty = 'easy' | 'normal' | 'hard';
+
+/** Political axes: -100 to +100. Each decision shifts these values. */
+export interface PoliticalAxes {
+  economic: number;    // -100 (esquerda/intervenção) a +100 (direita/mercado livre)
+  social: number;      // -100 (conservador) a +100 (progressista)
+  governance: number;  // -100 (democrata) a +100 (ditador)
+  military: number;    // -100 (civil/pacifista) a +100 (militarista)
+  diplomatic: number;  // -100 (isolacionista) a +100 (internacionalista)
+}
+
+/** Impact of a single decision on political axes */
+export interface DecisionImpact {
+  economic?: number;
+  social?: number;
+  governance?: number;
+  military?: number;
+  diplomatic?: number;
+}
+
+/** Nation well-being indicators (0–100). Each decision affects these. */
+export interface NationState {
+  stability: number;      // Political/social stability
+  economy: number;        // Economic health
+  wellbeing: number;      // Social welfare, health, education
+  inequality: number;     // Lower = less inequality, higher = more
+  internationalStanding: number;  // Reputation abroad
+}
+
+/** Impact of a decision on nation state (deltas) */
+export interface NationStateImpact {
+  stability?: number;
+  economy?: number;
+  wellbeing?: number;
+  inequality?: number;
+  internationalStanding?: number;
+}
 
 export interface Campaign {
   id: string;
   title: string;
-  system: string;
+  nation: string;
+  era?: string;
+  system?: string; // Legacy: "Reign" or scenario type
   theme: string;
   tone: string;
   difficulty?: Difficulty;
   notes?: string;
-  status?: 'active' | 'solved' | 'failed';
-  solvedAnswer?: SolvedAnswer;
+  status?: 'active' | 'ended';
   createdAt: number;
   updatedAt: number;
 }
@@ -49,7 +71,7 @@ export interface Recap {
   updatedAt: number;
 }
 
-export type EntityType = 'suspect' | 'investigator' | 'place' | 'evidence' | 'faction' | 'other' | 'character' | 'npc' | 'item';
+export type EntityType = 'country' | 'organization' | 'politician' | 'faction' | 'institution' | 'other' | 'character' | 'npc' | 'suspect' | 'investigator' | 'place' | 'evidence';
 
 export interface Entity {
   id: string;
@@ -87,6 +109,24 @@ export interface SuggestedAction {
   dc?: number;
 }
 
+/** Leader profile - replaces Character. Tracks political axes and nation state. */
+export interface Leader {
+  id: string;
+  campaignId: string;
+  name: string;
+  title?: string;
+  politicalAxes: PoliticalAxes;
+  nationState?: NationState;
+  lastImpact?: DecisionImpact;
+  lastNationImpact?: NationStateImpact;
+  lastDecisionSummary?: string;
+  backstory?: string;
+  goals?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+/** Legacy Character - kept for compatibility during migration, can be removed */
 export interface Character {
   id: string;
   campaignId: string;
@@ -124,4 +164,5 @@ export type NewMessage = Omit<Message, 'id' | 'createdAt'>;
 export type NewEntity = Omit<Entity, 'id' | 'lastSeenAt'>;
 export type NewFact = Omit<Fact, 'id' | 'createdAt'>;
 export type NewRoll = Omit<Roll, 'id' | 'createdAt'>;
+export type NewLeader = Omit<Leader, 'id' | 'createdAt' | 'updatedAt'>;
 export type NewCharacter = Omit<Character, 'id' | 'createdAt' | 'updatedAt'>;

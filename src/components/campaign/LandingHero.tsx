@@ -70,9 +70,9 @@ export function LandingHero({
 
       <div className="landing-hero-decoration" aria-hidden="true">
         <pre className="landing-ascii">
-{`    +------------------+
-    | Solo Levelling   |
-    +------------------+`}
+{`    +--------------------+
+    |  ▓▓▓  MANDATE  ▓▓▓  |
+    +--------------------+`}
         </pre>
       </div>
     </div>

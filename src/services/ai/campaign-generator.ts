@@ -10,6 +10,7 @@ export interface CampaignSuggestion {
   title: string;
   theme: string;
   tone: string;
+  nation?: string;
 }
 
 /**
@@ -205,4 +206,88 @@ function getMysteryFallback(style: string): CampaignSuggestion {
     noir: { title: 'Detective Noir', theme: '1940s city. A dame walks in. A man is dead. Shadows and cigarettes.', tone: 'Gritty, cynical' },
   };
   return fallbacks[style] || fallbacks.christie;
+}
+
+/**
+ * Generate scenario suggestion for nation leadership game
+ */
+export async function generateScenarioSuggestion(
+  style: string
+): Promise<CampaignSuggestion> {
+  const provider = getAIProvider();
+  const language = getLanguage();
+  const languageName = getLanguageName(language);
+
+  const client = provider === 'gemini' ? getGeminiClient() : getClaudeClient();
+
+  const styleDescriptions: Record<string, string> = {
+    economic: 'Economic crisis - recession, unemployment, austerity vs stimulus',
+    war: 'Military conflict - border crisis, invasion threat, diplomacy or war',
+    pandemic: 'Health crisis - virus, lockdowns, science vs economy',
+    election: 'Political - tight polls, scandals, campaign strategy',
+    diplomatic: 'International - trade war, summit, treaties',
+    social: 'Civil unrest - strikes, protests, reform or repression',
+    military: 'Defense - coup plot, draft, military expansion',
+  };
+
+  const styleDesc = styleDescriptions[style] || styleDescriptions.economic;
+
+  const systemPrompt = `You are a political drama writer creating scenarios for a nation leadership game.
+
+IMPORTANT: You MUST generate in ${languageName}. Title, nation, theme, and tone must all be in ${languageName}.
+
+Generate ONE political scenario concept. Type: ${styleDesc}
+
+RULES:
+- Title: catchy, max 60 chars (e.g. "The Recession")
+- Nation: fictional country name (e.g. "Democratic Republic")
+- Theme: the crisis/situation in 1-2 sentences, max 200 chars
+- Tone: 1-3 words (e.g. "Urgent, tense")
+- ALL content in ${languageName}
+
+OUTPUT FORMAT - Respond with ONLY valid JSON (no markdown):
+{
+  "title": "Scenario Title",
+  "nation": "Country Name",
+  "theme": "Description...",
+  "tone": "Mood descriptor"
+}`;
+
+  try {
+    const response = await client.sendMessageSync(
+      systemPrompt,
+      [{ role: 'user', content: `Generate a scenario for type: ${style}` }]
+    );
+
+    let jsonText = response.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+    const jsonMatch = jsonText.match(/\{[\s\S]*?\}/);
+    if (!jsonMatch) throw new Error('Failed to extract JSON');
+
+    const suggestion: CampaignSuggestion = JSON.parse(jsonMatch[0]);
+
+    if (suggestion.title && suggestion.title.length > 60) {
+      suggestion.title = suggestion.title.substring(0, 57) + '...';
+    }
+    if (suggestion.theme && suggestion.theme.length > 200) {
+      suggestion.theme = suggestion.theme.substring(0, 197) + '...';
+    }
+
+    return suggestion;
+  } catch (error) {
+    console.error('Scenario generation failed:', error);
+    return getScenarioFallback(style);
+  }
+}
+
+function getScenarioFallback(style: string): CampaignSuggestion {
+  const fallbacks: Record<string, CampaignSuggestion> = {
+    economic: { title: 'The Recession', nation: 'Democratic Republic', theme: 'Economic crisis. Unemployment rising. Banks failing. The people demand action.', tone: 'Urgent, tense' },
+    war: { title: 'The Border Crisis', nation: 'Northern Kingdom', theme: 'A neighboring nation threatens invasion. Troops at the border. Diplomacy or war?', tone: 'Military, decisive' },
+    pandemic: { title: 'The Pandemic', nation: 'Eastern Federation', theme: 'A deadly virus spreads. Hospitals overflow. Lockdown or freedom?', tone: 'Crisis, moral' },
+    election: { title: 'Election Year', nation: 'United States', theme: 'Polls are tight. Scandals surface. Will you play dirty or take the high road?', tone: 'Political, strategic' },
+    diplomatic: { title: 'The Trade War', nation: 'Western Alliance', theme: 'Tariffs escalate. Allies pressure. Domestic industry demands protection.', tone: 'Diplomatic, economic' },
+    social: { title: 'The Strike', nation: 'Central Confederation', theme: 'Workers paralyze the capital. Business demands crackdown. Choose your side.', tone: 'Social, divisive' },
+    military: { title: 'The Coup Plot', nation: 'Southern Republic', theme: 'Intelligence reports a conspiracy. Trust the military or purge the ranks?', tone: 'Dark, paranoid' },
+  };
+  return fallbacks[style] || fallbacks.economic;
 }

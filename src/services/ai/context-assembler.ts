@@ -1,4 +1,4 @@
-import type { Message, SuggestedAction } from '../../types/models';
+import type { Message, SuggestedAction, DecisionImpact, NationStateImpact } from '../../types/models';
 import type { ClaudeMessage } from '../../types/api';
 
 /**
@@ -133,14 +133,25 @@ export function parseXPAward(content: string): {
 export function parseSuggestedActions(content: string): {
   cleanContent: string;
   actions: SuggestedAction[];
+  impact?: import('../../types/models').DecisionImpact | null;
+  nationImpact?: import('../../types/models').NationStateImpact | null;
+  impactSummary?: string | null;
 } {
   const actions: SuggestedAction[] = [];
+  let cleanContent = content;
 
   // Match <actions>...</actions> block
   const actionsBlockMatch = content.match(/<actions>([\s\S]*?)<\/actions>/i);
 
   if (!actionsBlockMatch) {
-    return { cleanContent: content, actions: [] };
+    const impactResult = parseImpact(cleanContent);
+    return {
+      cleanContent: impactResult.cleanContent,
+      actions: [],
+      impact: impactResult.impact,
+      nationImpact: impactResult.nationImpact,
+      impactSummary: impactResult.impactSummary,
+    };
   }
 
   const actionsBlock = actionsBlockMatch[1];
@@ -162,13 +173,83 @@ export function parseSuggestedActions(content: string): {
   }
 
   // Remove <actions> block from content
-  let cleanContent = content.replace(/<actions>[\s\S]*?<\/actions>/i, '').trim();
+  cleanContent = content.replace(/<actions>[\s\S]*?<\/actions>/i, '').trim();
 
   // Also remove any stray <action> tags that appear outside <actions> blocks
-  // This handles cases where AI incorrectly generates orphan action tags
   cleanContent = cleanContent.replace(/<action\s+[^>]*>[\s\S]*?<\/action>/gi, '').trim();
 
-  return { cleanContent, actions };
+  // Parse and remove <impact> tag (Leader game)
+  const impactResult = parseImpact(cleanContent);
+
+  return {
+    cleanContent: impactResult.cleanContent,
+    actions,
+    impact: impactResult.impact,
+    nationImpact: impactResult.nationImpact,
+    impactSummary: impactResult.impactSummary,
+  };
+}
+
+/**
+ * Parse decision impact from AI response (Leader game)
+ * Format: <impact economic="5" social="-3" stability="-2" economy="3" wellbeing="-1" inequality="2" internationalStanding="0" />
+ * Optional: <impact ... summary="Brief description of tradeoffs" />
+ */
+export function parseImpact(content: string): {
+  cleanContent: string;
+  impact: DecisionImpact | null;
+  nationImpact?: NationStateImpact | null;
+  impactSummary?: string | null;
+} {
+  const impactMatch = content.match(/<impact\s+([^>]*)\s*\/?>/i);
+  if (!impactMatch) {
+    return { cleanContent: content, impact: null };
+  }
+
+  const attrs = impactMatch[1];
+  const impact: DecisionImpact = {};
+  const nationImpact: NationStateImpact = {};
+
+  const parseAttr = (name: string): number | undefined => {
+    const m = attrs.match(new RegExp(`${name}="([^"]*)"`, 'i'));
+    return m?.[1] ? parseInt(m[1], 10) : undefined;
+  };
+
+  const economic = parseAttr('economic');
+  const social = parseAttr('social');
+  const governance = parseAttr('governance');
+  const military = parseAttr('military');
+  const diplomatic = parseAttr('diplomatic');
+  if (economic != null) impact.economic = economic;
+  if (social != null) impact.social = social;
+  if (governance != null) impact.governance = governance;
+  if (military != null) impact.military = military;
+  if (diplomatic != null) impact.diplomatic = diplomatic;
+
+  const stability = parseAttr('stability');
+  const economy = parseAttr('economy');
+  const wellbeing = parseAttr('wellbeing');
+  const inequality = parseAttr('inequality');
+  const internationalStanding = parseAttr('internationalStanding');
+  if (stability != null) nationImpact.stability = stability;
+  if (economy != null) nationImpact.economy = economy;
+  if (wellbeing != null) nationImpact.wellbeing = wellbeing;
+  if (inequality != null) nationImpact.inequality = inequality;
+  if (internationalStanding != null) nationImpact.internationalStanding = internationalStanding;
+
+  const summaryMatch = attrs.match(/summary="([^"]*)"/i);
+  const impactSummary = summaryMatch?.[1]?.trim() || null;
+
+  const hasPolitical = Object.keys(impact).length > 0;
+  const hasNation = Object.keys(nationImpact).length > 0;
+  const cleanContent = content.replace(/<impact\s+[^>]*\s*\/?>/gi, '').trim();
+
+  return {
+    cleanContent,
+    impact: hasPolitical ? impact : null,
+    nationImpact: hasNation ? nationImpact : null,
+    impactSummary,
+  };
 }
 
 /**

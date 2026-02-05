@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { CampaignList } from './components/campaign/CampaignList';
-import { CaseClosedOverlay } from './components/campaign/CaseClosedOverlay';
+import { ReignSummaryOverlay } from './components/campaign/ReignSummaryOverlay';
 import { ChatContainer } from './components/chat/ChatContainer';
 import { Sidebar } from './components/sidebar/Sidebar';
 import { ApiKeySetup } from './components/common/ApiKeySetup';
@@ -18,12 +18,12 @@ import * as recapRepo from './services/storage/recap-repo';
 import * as entityRepo from './services/storage/entity-repo';
 import * as factRepo from './services/storage/fact-repo';
 import type { Campaign, Recap, Entity, SuggestedAction } from './types/models';
-import { MAX_ATTEMPTS_BY_DIFFICULTY } from './services/presets/preset-campaigns';
 import './styles/main.css';
 
 function App() {
   const [showApiKeySetup, setShowApiKeySetup] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showReignSummary, setShowReignSummary] = useState(false);
   const [recap, setRecap] = useState<Recap | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [isUpdatingRecap, setIsUpdatingRecap] = useState(false);
@@ -206,37 +206,24 @@ function App() {
     await sendMessage(action.action);
   };
 
-  const handleEndSession = async () => {
+  const handleEndSession = () => {
     if (!activeCampaignId || !activeCampaign) return;
-
     const confirmed = confirm(t('campaign.endSessionConfirm'));
+    if (confirmed) setShowReignSummary(true);
+  };
 
-    if (!confirmed) return;
-
+  const handleReignSummaryFinish = async () => {
+    if (!activeCampaignId || !activeCampaign) return;
     try {
       await runMemoryExtraction(false);
+      await updateCampaign(activeCampaignId, { ...activeCampaign, status: 'ended' });
+      setShowReignSummary(false);
       alert(t('campaign.sessionSaved'));
       handleBackToCampaigns();
     } catch (err) {
       console.error('Failed to end session:', err);
       alert(t('errors.failedToSaveSession') + ': ' + (err as Error).message);
     }
-  };
-
-  const handleCaseSolved = async (answer: { criminal: string; weapon: string; motive: string }) => {
-    if (!activeCampaignId) return;
-    await updateCampaign(activeCampaignId, {
-      status: 'solved',
-      solvedAnswer: answer,
-    });
-  };
-
-  const handleCaseFailed = async (answer?: { criminal: string; weapon: string; motive: string }) => {
-    if (!activeCampaignId) return;
-    await updateCampaign(activeCampaignId, {
-      status: 'failed',
-      solvedAnswer: answer ?? { criminal: '', weapon: '', motive: '' },
-    });
   };
 
   const handleSaveNotes = async (notes: string) => {
@@ -247,8 +234,6 @@ function App() {
   if (!activeCampaignId || !activeCampaign) {
     return <CampaignList onSelectCampaign={handleSelectCampaign} />;
   }
-
-  const isCampaignFinished = activeCampaign.status === 'solved' || activeCampaign.status === 'failed';
 
   return (
     <div className="app-container">
@@ -284,16 +269,7 @@ function App() {
           streamedContent={streamedContent}
           suggestedActions={suggestedActions}
           onSelectAction={handleSelectAction}
-          disabled={isCampaignFinished}
         />
-
-        {isCampaignFinished && (
-          <CaseClosedOverlay
-            status={activeCampaign.status as 'solved' | 'failed'}
-            answer={activeCampaign.solvedAnswer}
-            onBackToCampaigns={handleBackToCampaigns}
-          />
-        )}
       </div>
 
       <div
@@ -305,19 +281,26 @@ function App() {
         recap={recap}
         entities={entities}
         campaignId={activeCampaignId}
-        maxArrestAttempts={activeCampaign?.difficulty ? MAX_ATTEMPTS_BY_DIFFICULTY[activeCampaign.difficulty] : 3}
         notes={activeCampaign?.notes ?? ''}
+        messageCount={messages.length}
         onSaveNotes={handleSaveNotes}
         onEndSession={handleEndSession}
         onUpdateRecap={handleUpdateRecap}
-        onCaseSolved={handleCaseSolved}
-        onCaseFailed={handleCaseFailed}
         isUpdatingRecap={isUpdatingRecap}
         isOpen={sidebarOpen}
         onClose={toggleSidebar}
       />
 
       {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+
+      {showReignSummary && activeCampaign && (
+        <ReignSummaryOverlay
+          campaign={activeCampaign}
+          recap={recap}
+          onFinish={handleReignSummaryFinish}
+          onCancel={() => setShowReignSummary(false)}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type ActivePanel = 'arrest' | 'recap' | 'entities' | 'notes';
+type ActivePanel = 'leader' | 'recap' | 'entities' | 'notes';
 
 interface UIStore {
   sidebarOpen: boolean;
@@ -16,7 +16,7 @@ interface UIStore {
 
 export const useUIStore = create<UIStore>((set) => ({
   sidebarOpen: false, /* false = sidebar drawer closed on mobile; desktop always shows sidebar in flow */
-  activePanel: 'arrest',
+  activePanel: 'leader',
   theme: '8bit-green',
 
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),

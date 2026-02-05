@@ -1,6 +1,6 @@
 import { openDB } from 'idb';
 import type { DBSchema, IDBPDatabase } from 'idb';
-import type { Campaign, Message, Recap, Entity, Fact, MysteryAnswer, Roll, Character } from '../../types/models';
+import type { Campaign, Message, Recap, Entity, Fact, Roll, Character, Leader } from '../../types/models';
 
 interface SoloRPGDB extends DBSchema {
   campaigns: { key: string; value: Campaign; indexes: { 'createdAt': number; 'updatedAt': number } };
@@ -10,11 +10,11 @@ interface SoloRPGDB extends DBSchema {
   facts: { key: string; value: Fact; indexes: { 'campaignId': string; 'subjectEntityId': string; 'sourceMessageId': string; 'campaignCreatedAt': [string, number] } };
   rolls: { key: string; value: Roll; indexes: { 'campaignId': string; 'campaignCreatedAt': [string, number] } };
   characters: { key: string; value: Character; indexes: { 'campaignId': string } };
-  mystery_answers: { key: string; value: MysteryAnswer };
+  leaders: { key: string; value: Leader; indexes: { 'campaignId': string } };
 }
 
-const DB_NAME = import.meta.env.VITE_DB_NAME || 'solo-rpg-detective-db';
-const DB_VERSION = 3;
+const DB_NAME = import.meta.env.VITE_DB_NAME || 'solo-rpg-leader-db';
+const DB_VERSION = 4;
 
 let dbInstance: IDBPDatabase<SoloRPGDB> | null = null;
 
@@ -47,8 +47,9 @@ export async function getDB(): Promise<IDBPDatabase<SoloRPGDB>> {
         const characterStore = db.createObjectStore('characters', { keyPath: 'id' });
         characterStore.createIndex('campaignId', 'campaignId');
       }
-      if (oldVersion < 3) {
-        db.createObjectStore('mystery_answers', { keyPath: 'campaignId' });
+      if (oldVersion < 4) {
+        const leaderStore = db.createObjectStore('leaders', { keyPath: 'id' });
+        leaderStore.createIndex('campaignId', 'campaignId');
       }
     },
   });

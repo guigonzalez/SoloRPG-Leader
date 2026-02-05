@@ -5,9 +5,9 @@ import * as messageRepo from '../services/storage/message-repo';
 import * as recapRepo from '../services/storage/recap-repo';
 import * as entityRepo from '../services/storage/entity-repo';
 import * as factRepo from '../services/storage/fact-repo';
+import * as leaderRepo from '../services/storage/leader-repo';
 import { deleteMessagesAfterTimestamp } from '../services/storage/message-repo';
-import { generateMystery, toMysteryAnswer } from '../services/ai/mystery-generator';
-import { saveMysteryAnswer } from '../services/storage/mystery-answer-repo';
+import { generateScenario } from '../services/ai/scenario-generator';
 import { getLanguage } from '../services/storage/settings-storage';
 import { t } from '../services/i18n/use-i18n';
 import { isOnboardingCampaign } from '../services/onboarding/onboarding-campaign';
@@ -19,8 +19,8 @@ import {
 import type { NewMessage } from '../types/models';
 
 /**
- * Hook to manage AI interactions for detective narrative.
- * No dice, no attributes, no combat - pure investigation.
+ * Hook to manage AI interactions for nation leadership narrative.
+ * Player makes decisions; each affects political axes.
  */
 export function useAI(campaignId: string | null) {
   const { messages, addMessage, removeMessagesAfter, setAIResponding, setStreamedContent, appendStreamedContent, setError, setSuggestedActions } = useChatStore();
@@ -78,6 +78,7 @@ export function useAI(campaignId: string | null) {
       const recap = await recapRepo.getRecapByCampaign(campaignId) || null;
       const entities = await entityRepo.getEntitiesByCampaign(campaignId);
       const facts = await factRepo.getFactsByCampaign(campaignId);
+      const leader = await leaderRepo.getLeaderByCampaign(campaignId) ?? null;
 
       const allMessages = [...messages, savedUserMessage];
 
@@ -88,9 +89,21 @@ export function useAI(campaignId: string | null) {
           recap,
           entities,
           facts,
+          leader,
         },
         (chunk) => appendStreamedContent(chunk)
       );
+
+      if (leader && (response.impact || response.nationImpact)) {
+        await leaderRepo.applyDecisionImpact(
+          campaignId,
+          response.impact ?? {},
+          {
+            nationImpact: response.nationImpact ?? undefined,
+            summary: response.impactSummary ?? undefined,
+          }
+        );
+      }
 
       if (response.usedFallback) {
         const offlineNotice: NewMessage = {
@@ -123,7 +136,7 @@ export function useAI(campaignId: string | null) {
   };
 
   /**
-   * Start a new case - generate mystery with AI and display opening narrative
+   * Start a new mandate - generate scenario with AI and create leader
    */
   const startCampaign = async () => {
     if (!campaignId) {
@@ -140,22 +153,27 @@ export function useAI(campaignId: string | null) {
       setStreamedContent('');
       setError(null);
 
-      let result: { openingNarrative: string; secret: { criminal: string; weapon: string; motive: string } };
+      let result: { openingNarrative: string };
 
       // Onboarding: use pre-written content, no AI
       if (isOnboardingCampaign(campaign)) {
         const content = getOnboardingContent(getLanguage());
-        result = {
-          openingNarrative: content.opening,
-          secret: content.secret,
-        };
+        result = { openingNarrative: content.opening };
       } else {
-        result = await generateMystery(campaign);
+        result = await generateScenario(campaign);
       }
 
-      // Save secret answer for arrest verification (never shown to player)
-      const mysteryAnswer = toMysteryAnswer(campaignId, result);
-      await saveMysteryAnswer(mysteryAnswer);
+      // Create leader with default axes (if not exists)
+      try {
+        await leaderRepo.createLeader({
+          campaignId,
+          name: campaign.title,
+          title: t('leader.defaultTitle'),
+          politicalAxes: { economic: 0, social: 0, governance: 0, military: 0, diplomatic: 0 },
+        });
+      } catch {
+        // Leader already exists
+      }
 
       // Display opening narrative as first AI message
       const aiMessage: NewMessage = {
@@ -187,7 +205,7 @@ export function useAI(campaignId: string | null) {
       const fallbackContent = t('campaign.startFallback', {
         theme: campaign.theme,
         tone: campaign.tone,
-        system: campaign.system,
+        system: campaign.nation,
       });
 
       const fallbackMessage: NewMessage = {

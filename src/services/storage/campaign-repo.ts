@@ -62,7 +62,7 @@ export async function updateCampaign(id: string, updates: Partial<NewCampaign>):
 
 export async function deleteCampaign(id: string): Promise<void> {
   const db = await getDB();
-  const tx = db.transaction(['campaigns', 'messages', 'recaps', 'entities', 'facts', 'rolls'], 'readwrite');
+  const tx = db.transaction(['campaigns', 'messages', 'recaps', 'entities', 'facts', 'rolls', 'characters', 'leaders'], 'readwrite');
 
   // Delete campaign
   await tx.objectStore('campaigns').delete(id);
@@ -104,6 +104,24 @@ export async function deleteCampaign(id: string): Promise<void> {
   while (rollCursor) {
     await rollCursor.delete();
     rollCursor = await rollCursor.continue();
+  }
+
+  // Delete leaders
+  const leaderStore = tx.objectStore('leaders');
+  const leaderIndex = leaderStore.index('campaignId');
+  let leaderCursor = await leaderIndex.openCursor(IDBKeyRange.only(id));
+  while (leaderCursor) {
+    await leaderCursor.delete();
+    leaderCursor = await leaderCursor.continue();
+  }
+
+  // Delete characters
+  const characterStore = tx.objectStore('characters');
+  const characterIndex = characterStore.index('campaignId');
+  let characterCursor = await characterIndex.openCursor(IDBKeyRange.only(id));
+  while (characterCursor) {
+    await characterCursor.delete();
+    characterCursor = await characterCursor.continue();
   }
 
   await tx.done;

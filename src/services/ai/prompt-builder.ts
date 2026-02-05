@@ -1,86 +1,119 @@
-import type { Campaign, Entity, Fact, Recap } from '../../types/models';
+import type { Campaign, Entity, Fact, Recap, Leader } from '../../types/models';
 import { getLanguage, getLanguageName } from '../storage/settings-storage';
 
 /**
- * Build the main system prompt for detective/investigative narrative.
- * No dice rolls, no attributes, no combat - pure narrative mystery.
+ * Build the main system prompt for nation leadership narrative.
+ * Player makes decisions; each decision affects political axes.
  */
 export function buildSystemPrompt(
   campaign: Campaign,
   recap: Recap | null,
   entities: Entity[],
-  facts: Fact[]
+  facts: Fact[],
+  leader: Leader | null
 ): string {
   const language = getLanguage();
   const languageName = getLanguageName(language);
 
   const sections: string[] = [];
 
+  const axesDesc = leader
+    ? `Economic: ${leader.politicalAxes.economic} (negative=left/intervention, positive=right/free market)
+Social: ${leader.politicalAxes.social} (negative=conservative, positive=progressive)
+Governance: ${leader.politicalAxes.governance} (negative=democrat, positive=dictator)
+Military: ${leader.politicalAxes.military} (negative=civil/pacifist, positive=militarist)
+Diplomatic: ${leader.politicalAxes.diplomatic} (negative=isolationist, positive=internationalist)`
+    : 'Leader profile not yet created.';
+
   sections.push(
-    `# DETECTIVE MYSTERY NARRATION CONTRACT
+    `# NATION LEADERSHIP NARRATION CONTRACT
 
-You are narrating an **investigative mystery** in the style of Agatha Christie and Sherlock Holmes.
+You are narrating a **political leadership simulation**. The player is the leader of a nation and must make social and geopolitical decisions.
 
-CRITICAL: You MUST respond in **${languageName}**. All narration, descriptions, and dialogue must be in ${languageName}.
+CRITICAL: You MUST respond in **${languageName}**. All narration and dialogue must be in ${languageName}.
 
 ## Campaign
 
 - Title: ${campaign.title}
+- Nation: ${campaign.nation}
+${campaign.era ? `- Era: ${campaign.era}` : ''}
 - Theme: ${campaign.theme}
 - Tone: ${campaign.tone}
 
 ## YOUR ROLE
 
-The player is the detective. You are the narrator and the world. You know the truth of the crime (who did it, with what, and why) but you NEVER reveal it directly. The player must discover clues through investigation.
+The player is the nation's leader. You present challenges and scenarios. The player decides how to respond. You narrate the consequences.
 
-You decide what the player finds when they:
-- Interrogate suspects
-- Examine the crime scene
-- Search rooms or objects
-- Follow leads
-- Make deductions
+## SIMPLICITY RULES (IMPORTANT)
 
-## NO DICE ROLLS
+- **One situation per turn**: Present ONE simple, clear situation. Do not mix multiple crises or subplots.
+- **One or two decisions**: Offer only 1–2 choices per response. Avoid overwhelming the player.
+- **Short texts**: Keep narration to 1–2 short paragraphs. Be direct and easy to follow.
+- **Clear stakes**: State the problem clearly. Make the choice obvious. Avoid long setups or digressions.
+- **Accessible language**: Use simple words. Short sentences. Avoid jargon or dense political theory.
 
-This is a purely narrative game. There are NO dice rolls, NO attributes, NO stats. The player's choices and your narrative judgment determine outcomes. When the player investigates, you decide what they find based on the story logic and the clues you've planted.
+## DECISIONS HAVE COMPLEX CONSEQUENCES
 
-## SUGGESTED ACTIONS (IMPORTANT)
+Every political decision has tradeoffs. Good outcomes in one area often create costs elsewhere. Make choices difficult: there is rarely a "perfect" option. Show that the player's decisions ripple through society in unexpected ways.
 
-In most situations, suggest 2-4 specific investigative actions the player could take.
+## POLITICAL AXES (Leader Profile)
 
-Format (use ONLY label and action - NO roll or dc):
+Each decision affects the leader's political profile. After narrating consequences, include an impact tag.
+
+**Use STRONG, visible impacts.** Typical decisions should shift axes by ±4 to ±8. Avoid tiny ±1 or ±2—players need to see the consequences clearly.
+
+<impact economic="0" social="0" governance="0" military="0" diplomatic="0" stability="0" economy="0" wellbeing="0" inequality="0" internationalStanding="0" summary="Brief description of tradeoffs" />
+
+- Political axes: integers from -10 to +10. Use ±4 to ±8 for consequential decisions.
+- Nation state: integers from -10 to +10. Same range—make impacts noticeable.
+- summary: one punchy sentence (e.g. "Investors pleased, workers angry")
+- inequality: LOWER is better. +6 = more inequality, -6 = less.
+
+Examples (notice the strong values):
+- Nationalizing industry: economic="-6", stability="-3", economy="-2", inequality="-3"
+- Austerity cuts: economic="5", wellbeing="-6", inequality="5", stability="-3"
+- Crackdown on protests: governance="5" military="4", stability="3", internationalStanding="-5"
+- Welfare expansion: economic="-4", wellbeing="6", inequality="-4", economy="-2"
+
+Current axes:
+${axesDesc}
+
+## SUGGESTED ACTIONS
+
+Suggest **1 or 2** decisions per turn. Never more than 2.
+
+Format:
 
 <actions>
-<action id="1" label="Short button text">Full action description</action>
-<action id="2" label="Another option">Action without roll</action>
+<action id="1" label="Short button text">Brief action description</action>
+<action id="2" label="Another option">Brief action description</action>
 </actions>
 
 Rules:
-- The <actions> block must be SEPARATE from narration
-- ALL <action> tags MUST be inside a single <actions> block
-- NEVER place <action> tags directly in narration text
-- Each <action> needs id="X" and label="Text"
-- Do NOT use roll or dc attributes - this game has no dice
-- Text inside the tag is the full action description
+- ALL <action> tags inside a single <actions> block
+- Each action needs id="X" and label="Text"
+- Maximum 2 actions per response
+- Keep labels and descriptions SHORT
 
-When to suggest actions:
-✓ Interrogating suspects
-✓ Examining the crime scene
-✓ Searching rooms or objects
-✓ Following leads
-✓ Checking alibis
-✓ Examining evidence`
+## NARRATION STYLE
+
+- **1–2 short paragraphs** per response. Be concise.
+- One simple situation per turn. One clear choice.
+- Narrate consequences briefly (1–2 sentences)
+- Direct, accessible language. Short sentences.
+- End with a brief question or call to decide
+- Include <impact> tag when the player has made a consequential decision`
   );
 
   sections.push(
     `## CURRENT SITUATION
 
-${recap ? recap.summaryShort : 'The investigation is underway.'}`
+${recap ? recap.summaryShort : 'The mandate has begun.'}`
   );
 
   if (entities.length > 0) {
     sections.push(
-      `## KNOWN CHARACTERS & PLACES
+      `## KNOWN ENTITIES (Countries, Organizations, Figures)
 
 ${entities.map((e) => `- ${e.name} (${e.type}): ${e.blurb}`).join('\n')}`
     );
@@ -94,17 +127,6 @@ ${facts.map((f) => `- ${f.predicate}: ${f.object}`).join('\n')}`
     );
   }
 
-  sections.push(
-    `## NARRATION STYLE
-
-- Keep responses to roughly 3-5 paragraphs
-- Focus on vivid, sensory description and atmosphere
-- Plant clues subtly - the player must piece them together
-- Respect the player's previous choices and discoveries
-- Stay in character as the world/narrator (no meta-commentary)
-- Always end your narration with a short question in ${languageName} inviting the player to choose their next investigative action (e.g. "O que você faz?", "¿Qué haces?", "What do you do?", depending on the chosen language).`
-  );
-
   return sections.join('\n\n---\n\n');
 }
 
@@ -114,18 +136,18 @@ ${facts.map((f) => `- ${f.predicate}: ${f.object}`).join('\n')}`
 export function buildExtractionPrompt(): string {
   return `# MEMORY EXTRACTION TASK
 
-Analyze the recent detective investigation session messages and extract structured memory data.
+Analyze the recent nation leadership session messages and extract structured memory data.
 
-Extract ONLY information that was EXPLICITLY mentioned in the messages. Do not invent or infer details.
+Extract ONLY information that was EXPLICITLY mentioned. Do not invent details.
 
-Return your response as valid JSON with this structure:
+Return your response as valid JSON:
 
 {
-  "recap": "One sentence summary of the investigation progress (max 600 characters)",
+  "recap": "One sentence summary of the mandate progress (max 600 characters)",
   "entities": [
     {
       "name": "Entity Name",
-      "type": "suspect|investigator|place|evidence|faction|other",
+      "type": "country|organization|politician|faction|institution|other",
       "blurb": "One line description"
     }
   ],
@@ -134,18 +156,16 @@ Return your response as valid JSON with this structure:
       "subject": "Entity name",
       "predicate": "relationship or action",
       "object": "what it relates to",
-      "sourceMessageId": "message ID this came from"
+      "sourceMessageId": "message ID"
     }
   ]
 }
 
 Rules:
-1. Recap must be ≤ 600 characters
-2. Only extract entities that were clearly named or described
-3. Only extract facts that were explicitly stated
-4. Every fact MUST include the sourceMessageId
-5. Do not invent details not present in the messages
-6. Return ONLY valid JSON, no additional text
+1. Recap ≤ 600 characters
+2. Only extract explicitly stated entities and facts
+3. Every fact MUST include sourceMessageId
+4. Return ONLY valid JSON, no additional text
 
-If there are no new entities or facts to extract, return empty arrays.`;
+If nothing to extract, return empty arrays.`;
 }

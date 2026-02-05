@@ -1,44 +1,46 @@
 /**
- * Literary / Book-inspired Styling for SoloRPG Detective
- * Evokes classic detective novels, parchment, and vintage typography
+ * SoloRPG Leader - Nation Leadership Simulation
+ * Stately, institutional aesthetic inspired by government documents and political drama
  */
 
 :root {
-  /* Parchment & paper palette */
-  --color-bg-primary: #f5f0e6;
-  --color-bg-secondary: #ebe6dc;
-  --color-bg-tertiary: #e5e0d5;
+  /* Government / institutional palette - deep navy, warm paper */
+  --color-bg-primary: #f6f4ef;
+  --color-bg-secondary: #ebe8e0;
+  --color-bg-tertiary: #e2ded6;
 
-  --color-text-primary: #2c2c2c;
-  --color-text-secondary: #5a5a5a;
+  --color-text-primary: #1a2634;
+  --color-text-secondary: #3d4f5f;
 
-  --color-border: #c4b8a8;
-  --color-accent: #722f37;
+  --color-border: #8b9aa8;
+  --color-accent: #1e3a5f;
+  --color-impact-positive: #2d6a2d;
+  --color-impact-negative: #a03030;
 
   /* Semantic tokens */
   --color-surface: var(--color-bg-secondary);
   --color-surface-alt: var(--color-bg-tertiary);
-  --color-muted: rgba(44, 44, 44, 0.08);
+  --color-muted: rgba(26, 38, 52, 0.06);
   --color-overlay: rgba(0, 0, 0, 0.4);
   --color-focus-ring: var(--color-accent);
 
-  /* Soft shadows (book-like) */
-  --color-shadow: rgba(44, 44, 44, 0.15);
+  /* Soft shadows */
+  --color-shadow: rgba(26, 38, 52, 0.12);
   --shadow-sm: 0 1px 3px var(--color-shadow);
   --shadow-md: 0 2px 8px var(--color-shadow);
   --shadow-lg: 0 4px 16px var(--color-shadow);
 
-  /* Chat bubbles - subtle paper tones */
-  --color-user-message: #e0d9cc;
-  --color-ai-message: #d8d2c4;
-  --color-system-message: rgba(114, 47, 55, 0.12);
+  /* Chat bubbles - subtle institutional tones */
+  --color-user-message: #e0dcd4;
+  --color-ai-message: #d6d2ca;
+  --color-system-message: rgba(30, 58, 95, 0.1);
 
   /* Selection */
   --color-selection-bg: var(--color-accent);
-  --color-selection-fg: #f5f0e6;
+  --color-selection-fg: #f6f4ef;
 
   --color-scroll-track: var(--color-bg-secondary);
-  --color-scroll-thumb: #b8ad9e;
+  --color-scroll-thumb: #9ca8b4;
   --color-scroll-thumb-hover: var(--color-accent);
 
   /* Spacing */
@@ -52,7 +54,7 @@
   --border-width: 1px;
   --border-radius: 2px;
 
-  /* Typography - literary serif */
+  /* Typography - formal serif for gravitas */
   --font-family: 'Crimson Text', 'Georgia', 'Times New Roman', serif;
   --font-size-sm: 13px;
   --font-size-md: 15px;
@@ -295,5 +297,42 @@ body {
 
 .blink {
   animation: blink 1s step-start infinite;
+}
+
+/* Impact animations - visual feedback when decisions change axes */
+@keyframes impact-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 0 3px var(--color-accent); }
+}
+
+@keyframes impact-glow {
+  0% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.15); }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+.impact-bar-changed {
+  animation: impact-pulse 1.2s ease-out 2;
+}
+
+.impact-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.impact-badge.positive {
+  background: rgba(45, 106, 45, 0.2);
+  color: var(--color-impact-positive);
+}
+
+.impact-badge.negative {
+  background: rgba(160, 48, 48, 0.2);
+  color: var(--color-impact-negative);
 }
 

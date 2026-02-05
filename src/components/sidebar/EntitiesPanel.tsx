@@ -46,7 +46,7 @@ export function EntitiesPanel({ entities }: EntitiesPanelProps) {
               border: '1px solid var(--color-border)',
               whiteSpace: 'nowrap'
             }}>
-              {t(`entitiesPanel.${entity.type === 'character' ? 'suspect' : entity.type === 'npc' ? 'investigator' : entity.type === 'item' ? 'evidence' : entity.type}`)}
+              {t(`entitiesPanel.${entity.type}`)}
             </div>
           </div>
           {entity.blurb && (
