@@ -182,8 +182,8 @@ export interface Translations {
   };
 
   // Sidebar
-  sidebar: {
-    gameInfo: string;
+    sidebar: {
+      gameInfo: string;
     menu: string;
     endSession: string;
     character: string;
@@ -416,30 +416,30 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaignCard: {
-      deleteConfirm: 'Delete campaign "{title}"? This cannot be undone.',
+      deleteConfirm: 'Delete case "{title}"? This cannot be undone.',
       theme: 'Theme',
       tone: 'Tone',
     },
 
     landing: {
-      badge: 'AI-Powered Solo RPG',
-      title: 'Solo RPG',
-      tagline: 'Your adventure, your rules.',
-      description: 'Play tabletop RPGs solo with an AI narrator. Choose from 50 ready-to-play campaigns or create your own. Roll dice, make choices, and live the story.',
+      badge: 'Detective Mystery Solo',
+      title: 'Solo Detective',
+      tagline: 'Investigate. Deduce. Solve.',
+      description: 'Solve murder mysteries solo with an AI narrator. Choose from 20 ready-to-play cases or create your own. Investigate, interrogate suspects, and crack the case.',
       quickStartCta: 'Start Playing Now',
       tutorialCta: 'Tutorial (no API key needed)',
-      createCustom: 'Create Custom Campaign',
-      firstTimeHint: 'New here? Click above to jump into a ready-made adventure in seconds.',
+      createCustom: 'Create Custom Case',
+      firstTimeHint: 'New here? Click above to jump into a ready-made mystery in seconds.',
     },
 
     campaignList: {
-      title: 'Solo RPG',
-      newCampaign: 'New Campaign',
-      noCampaigns: 'No campaigns yet',
-      createFirst: 'Create your first adventure!',
+      title: 'Solo Detective',
+      newCampaign: 'New Case',
+      noCampaigns: 'No cases yet',
+      createFirst: 'Create your first case!',
       lastPlayed: 'Last played',
-      selectCampaign: 'Select a campaign to continue',
-      quickStart: 'Quick Start (50 presets)',
+      selectCampaign: 'Select a case to continue',
+      quickStart: 'Quick Start (20 cases)',
     },
 
     presetCampaigns: {
@@ -458,9 +458,9 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaign: {
-      endSessionConfirm: 'End this session? This will save your progress and extract important memories from your adventure.',
+      endSessionConfirm: 'End this session? This will save your progress and extract important clues from your investigation.',
       sessionSaved: 'Session ended! Your progress has been saved.',
-      startFallback: 'Welcome to your {theme} adventure in the {system} system!\n\nYour journey begins in a world filled with mystery and danger. The tone is {tone}, and countless stories await to be told.\n\nWhat would you like to do?',
+      startFallback: 'Welcome to your investigation.\n\nTheme: {theme}\nTone: {tone}\n\nThe case awaits. What would you like to do?',
     },
 
     gameOver: {
@@ -486,9 +486,9 @@ export const translations: Record<Language, Translations> = {
       generateWithAI: 'Generate with AI',
       generating: 'Generating...',
       selectStyle: 'Select style...',
-      system: 'RPG System',
+      system: 'Mystery Type',
       narrativeTheme: 'Narrative Theme',
-      narrativeThemeNotice: 'This is narrative inspiration only. SoloRPG uses its own universal mechanics (d20 + modifier). The system choice only affects attribute names and story flavor - not game rules.',
+      narrativeThemeNotice: 'This is a purely narrative mystery game. No dice, no stats—just investigation and deduction. Your choices and the clues you find determine the outcome.',
       selectNarrativeTheme: 'Select a narrative theme...',
       theme: 'Theme & Setting',
       themePlaceholder: 'Describe the setting, victim, suspects...',
@@ -569,7 +569,7 @@ export const translations: Record<Language, Translations> = {
     },
 
     sidebar: {
-      gameInfo: 'Game Info',
+      gameInfo: 'Case Info',
       menu: 'Menu',
       endSession: 'End Session',
       character: 'Character',
@@ -602,10 +602,10 @@ export const translations: Record<Language, Translations> = {
 
     recapPanel: {
       title: 'Story So Far',
-      noRecap: 'No recap yet. The adventure begins...',
+      noRecap: 'No recap yet. The investigation begins...',
       update: 'Update',
       updating: 'Updating...',
-      clickUpdate: 'Click "Update" to generate a story recap from your adventure...',
+      clickUpdate: 'Click "Update" to generate a story recap from your investigation...',
       progressTracks: 'Progress Tracks',
     },
 
@@ -613,7 +613,7 @@ export const translations: Record<Language, Translations> = {
       title: 'Known Entities',
       noEntities: 'No entities discovered yet',
       empty: 'Suspects, investigators, places and evidence will appear here...',
-      updateHint: 'Click "Update" in the Recap tab to extract entities from your adventure!',
+      updateHint: 'Click "Update" in the Recap tab to extract suspects and clues from your investigation!',
       suspect: 'Suspect',
       investigator: 'Investigator',
       place: 'Place',
@@ -629,15 +629,15 @@ export const translations: Record<Language, Translations> = {
     },
 
     chat: {
-      messagePlaceholder: 'Type your action or dice roll...',
+      messagePlaceholder: 'Describe your investigation action...',
       aiThinking: 'AI is thinking...',
       suggestedActions: 'Suggested Actions',
       rolled: 'Rolled',
       rollResult: 'Rolled {notation}: {result}',
       dc: 'DC',
-      adventureBegins: 'Your adventure begins...',
+      adventureBegins: 'Your investigation begins...',
       firstActionPrompt: 'Describe your first action below',
-      narratorTyping: 'NARRATOR · typing...',
+      narratorTyping: 'STORY · typing...',
       narratorThinking: 'Narrator is thinking',
       resendMessage: 'Resend',
       continueNarration: 'Continue',
@@ -720,8 +720,8 @@ export const translations: Record<Language, Translations> = {
     },
 
     apiKeySetup: {
-      welcome: 'Welcome to SoloRPG!',
-      intro: 'To start your adventure, you need to configure your AI provider API key.',
+      welcome: 'Welcome to Solo Detective!',
+      intro: 'To start investigating, you need to configure your AI provider API key.',
       introPrivacy: 'Your API key is stored locally in your browser and never sent anywhere except directly to the provider\'s API.',
       aiProvider: 'AI Provider',
       anthropicKey: 'Anthropic API Key',
@@ -814,30 +814,30 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaignCard: {
-      deleteConfirm: 'Excluir campanha "{title}"? Esta ação não pode ser desfeita.',
+      deleteConfirm: 'Excluir caso "{title}"? Esta ação não pode ser desfeita.',
       theme: 'Tema',
       tone: 'Tom',
     },
 
     landing: {
-      badge: 'RPG Solo com IA',
-      title: 'Solo RPG',
-      tagline: 'Sua aventura, suas regras.',
-      description: 'Jogue RPGs de mesa sozinho com um narrador de IA. Escolha entre 50 campanhas prontas ou crie a sua. Role dados, faça escolhas e viva a história.',
+      badge: 'Detetive Solo com IA',
+      title: 'Solo Detective',
+      tagline: 'Investigue. Deduza. Resolva.',
+      description: 'Resolva mistérios de assassinato sozinho com um narrador de IA. Escolha entre 20 casos prontos ou crie o seu. Investigue, interrogue suspeitos e desvende o caso.',
       quickStartCta: 'Jogar Agora',
       tutorialCta: 'Tutorial (sem chave de API)',
-      createCustom: 'Criar Campanha Personalizada',
-      firstTimeHint: 'Novo por aqui? Clique acima para começar uma aventura pronta em segundos.',
+      createCustom: 'Criar Caso Personalizado',
+      firstTimeHint: 'Novo por aqui? Clique acima para começar um mistério pronto em segundos.',
     },
 
     campaignList: {
-      title: 'RPG Solo',
-      newCampaign: 'Nova Campanha',
-      noCampaigns: 'Nenhuma campanha ainda',
-      createFirst: 'Crie sua primeira aventura!',
+      title: 'Solo Detective',
+      newCampaign: 'Novo Caso',
+      noCampaigns: 'Nenhum caso ainda',
+      createFirst: 'Crie seu primeiro caso!',
       lastPlayed: 'Última jogada',
-      selectCampaign: 'Selecione uma campanha para continuar',
-      quickStart: 'Clique e Jogue (50 campanhas)',
+      selectCampaign: 'Selecione um caso para continuar',
+      quickStart: 'Clique e Jogue (20 casos)',
     },
 
     presetCampaigns: {
@@ -856,9 +856,9 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaign: {
-      endSessionConfirm: 'Encerrar esta sessão? Isso salvará seu progresso e extrairá memórias importantes da sua aventura.',
+      endSessionConfirm: 'Encerrar esta sessão? Isso salvará seu progresso e extrairá pistas importantes da sua investigação.',
       sessionSaved: 'Sessão encerrada! Seu progresso foi salvo.',
-      startFallback: 'Bem-vindo à sua aventura {theme} no sistema {system}!\n\nSua jornada começa em um mundo cheio de mistério e perigo. O tom é {tone}, e incontáveis histórias aguardam para serem contadas.\n\nO que você gostaria de fazer?',
+      startFallback: 'Bem-vindo à sua investigação.\n\nTema: {theme}\nTom: {tone}\n\nO caso aguarda. O que você gostaria de fazer?',
     },
 
     gameOver: {
@@ -884,9 +884,9 @@ export const translations: Record<Language, Translations> = {
       generateWithAI: 'Gerar com IA',
       generating: 'Gerando...',
       selectStyle: 'Selecione o estilo...',
-      system: 'Sistema de RPG',
+      system: 'Tipo de Mistério',
       narrativeTheme: 'Tema Narrativo',
-      narrativeThemeNotice: 'Isto é apenas inspiração narrativa. SoloRPG usa suas próprias mecânicas universais (d20 + modificador). A escolha do sistema afeta apenas nomes de atributos e sabor narrativo - não as regras do jogo.',
+      narrativeThemeNotice: 'Este é um jogo de mistério puramente narrativo. Sem dados, sem estatísticas—apenas investigação e dedução. Suas escolhas e as pistas que encontrar determinam o resultado.',
       selectNarrativeTheme: 'Selecione um tema narrativo...',
       theme: 'Tema e Cenário',
       themePlaceholder: 'Descreva o cenário, vítima, suspeitos...',
@@ -967,7 +967,7 @@ export const translations: Record<Language, Translations> = {
     },
 
     sidebar: {
-      gameInfo: 'Info do Jogo',
+      gameInfo: 'Info do Caso',
       menu: 'Menu',
       endSession: 'Encerrar Sessão',
       character: 'Personagem',
@@ -1000,10 +1000,10 @@ export const translations: Record<Language, Translations> = {
 
     recapPanel: {
       title: 'História Até Agora',
-      noRecap: 'Nenhum resumo ainda. A aventura começa...',
+      noRecap: 'Nenhum resumo ainda. A investigação começa...',
       update: 'Atualizar',
       updating: 'Atualizando...',
-      clickUpdate: 'Clique em "Atualizar" para gerar um resumo da história da sua aventura...',
+      clickUpdate: 'Clique em "Atualizar" para gerar um resumo da história da sua investigação...',
       progressTracks: 'Relógios de Progresso',
     },
 
@@ -1011,7 +1011,7 @@ export const translations: Record<Language, Translations> = {
       title: 'Entidades Conhecidas',
       noEntities: 'Nenhuma entidade descoberta ainda',
       empty: 'Suspeitos, investigadores, locais e evidências aparecerão aqui...',
-      updateHint: 'Clique em "Atualizar" na aba Resumo para extrair entidades da sua aventura!',
+      updateHint: 'Clique em "Atualizar" na aba Resumo para extrair suspeitos e pistas da sua investigação!',
       suspect: 'Suspeito',
       investigator: 'Investigador',
       place: 'Local',
@@ -1027,13 +1027,13 @@ export const translations: Record<Language, Translations> = {
     },
 
     chat: {
-      messagePlaceholder: 'Digite sua ação ou rolagem de dados...',
+      messagePlaceholder: 'Descreva sua ação de investigação...',
       aiThinking: 'IA está pensando...',
       suggestedActions: 'Ações Sugeridas',
       rolled: 'Rolou',
       rollResult: 'Rolou {notation}: {result}',
       dc: 'CD',
-      adventureBegins: 'Sua aventura começa...',
+      adventureBegins: 'Sua investigação começa...',
       firstActionPrompt: 'Descreva sua primeira ação abaixo',
       narratorTyping: 'NARRADOR · digitando...',
       narratorThinking: 'Narrador está pensando',
@@ -1118,8 +1118,8 @@ export const translations: Record<Language, Translations> = {
     },
 
     apiKeySetup: {
-      welcome: 'Bem-vindo ao SoloRPG!',
-      intro: 'Para começar sua aventura, você precisa configurar sua chave de API do provedor de IA.',
+      welcome: 'Bem-vindo ao Solo Detective!',
+      intro: 'Para começar a investigar, você precisa configurar sua chave de API do provedor de IA.',
       introPrivacy: 'Sua chave de API é armazenada localmente no navegador e nunca é enviada a nenhum lugar, exceto diretamente à API do provedor.',
       aiProvider: 'Provedor de IA',
       anthropicKey: 'Chave de API da Anthropic',
@@ -1212,30 +1212,30 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaignCard: {
-      deleteConfirm: '¿Eliminar campaña "{title}"? Esta acción no se puede deshacer.',
+      deleteConfirm: '¿Eliminar caso "{title}"? Esta acción no se puede deshacer.',
       theme: 'Tema',
       tone: 'Tono',
     },
 
     landing: {
-      badge: 'RPG en Solitario con IA',
-      title: 'Solo RPG',
-      tagline: 'Tu aventura, tus reglas.',
-      description: 'Juega RPGs de mesa en solitario con un narrador de IA. Elige entre 50 campañas listas o crea la tuya. Tira dados, toma decisiones y vive la historia.',
+      badge: 'Detective en Solitario con IA',
+      title: 'Solo Detective',
+      tagline: 'Investiga. Deduce. Resuelve.',
+      description: 'Resuelve misterios de asesinato en solitario con un narrador de IA. Elige entre 20 casos listos o crea el tuyo. Investiga, interroga sospechosos y resuelve el caso.',
       quickStartCta: 'Jugar Ahora',
       tutorialCta: 'Tutorial (sin clave de API)',
-      createCustom: 'Crear Campaña Personalizada',
-      firstTimeHint: '¿Nuevo aquí? Haz clic arriba para empezar una aventura lista en segundos.',
+      createCustom: 'Crear Caso Personalizado',
+      firstTimeHint: '¿Nuevo aquí? Haz clic arriba para empezar un misterio listo en segundos.',
     },
 
     campaignList: {
-      title: 'RPG en Solitario',
-      newCampaign: 'Nueva Campaña',
-      noCampaigns: 'No hay campañas aún',
-      createFirst: '¡Crea tu primera aventura!',
+      title: 'Solo Detective',
+      newCampaign: 'Nuevo Caso',
+      noCampaigns: 'No hay casos aún',
+      createFirst: '¡Crea tu primer caso!',
       lastPlayed: 'Última jugada',
-      selectCampaign: 'Selecciona una campaña para continuar',
-      quickStart: 'Jugar Rápido (50 plantillas)',
+      selectCampaign: 'Selecciona un caso para continuar',
+      quickStart: 'Jugar Rápido (20 casos)',
     },
 
     presetCampaigns: {
@@ -1254,9 +1254,9 @@ export const translations: Record<Language, Translations> = {
     },
 
     campaign: {
-      endSessionConfirm: '¿Finalizar esta sesión? Esto guardará tu progreso y extraerá recuerdos importantes de tu aventura.',
+      endSessionConfirm: '¿Finalizar esta sesión? Esto guardará tu progreso y extraerá pistas importantes de tu investigación.',
       sessionSaved: '¡Sesión finalizada! Tu progreso ha sido guardado.',
-      startFallback: '¡Bienvenido a tu aventura {theme} en el sistema {system}!\n\nTu viaje comienza en un mundo lleno de misterio y peligro. El tono es {tone}, e innumerables historias esperan ser contadas.\n\n¿Qué te gustaría hacer?',
+      startFallback: 'Bienvenido a tu investigación.\n\nTema: {theme}\nTono: {tone}\n\nEl caso te espera. ¿Qué te gustaría hacer?',
     },
 
     gameOver: {
@@ -1282,9 +1282,9 @@ export const translations: Record<Language, Translations> = {
       generateWithAI: 'Generar con IA',
       generating: 'Generando...',
       selectStyle: 'Selecciona el estilo...',
-      system: 'Sistema de RPG',
+      system: 'Tipo de Misterio',
       narrativeTheme: 'Tema Narrativo',
-      narrativeThemeNotice: 'Esto es solo inspiración narrativa. SoloRPG usa sus propias mecánicas universales (d20 + modificador). La elección del sistema solo afecta nombres de atributos y sabor narrativo - no las reglas del juego.',
+      narrativeThemeNotice: 'Este es un juego de misterio puramente narrativo. Sin dados, sin estadísticas—solo investigación y deducción. Tus elecciones y las pistas que encuentres determinan el resultado.',
       selectNarrativeTheme: 'Selecciona un tema narrativo...',
       theme: 'Tema y Escenario',
       themePlaceholder: 'Describe el escenario, víctima, sospechosos...',
@@ -1365,7 +1365,7 @@ export const translations: Record<Language, Translations> = {
     },
 
     sidebar: {
-      gameInfo: 'Info del Juego',
+      gameInfo: 'Info del Caso',
       menu: 'Menú',
       endSession: 'Finalizar Sesión',
       character: 'Personaje',
@@ -1398,10 +1398,10 @@ export const translations: Record<Language, Translations> = {
 
     recapPanel: {
       title: 'Historia Hasta Ahora',
-      noRecap: 'No hay resumen aún. La aventura comienza...',
+      noRecap: 'No hay resumen aún. La investigación comienza...',
       update: 'Actualizar',
       updating: 'Actualizando...',
-      clickUpdate: 'Haz clic en "Actualizar" para generar un resumen de la historia de tu aventura...',
+      clickUpdate: 'Haz clic en "Actualizar" para generar un resumen de la historia de tu investigación...',
       progressTracks: 'Relojes de Progreso',
     },
 
@@ -1409,7 +1409,7 @@ export const translations: Record<Language, Translations> = {
       title: 'Entidades Conocidas',
       noEntities: 'No se han descubierto entidades aún',
       empty: 'Sospechosos, investigadores, lugares y evidencias aparecerán aquí...',
-      updateHint: '¡Haz clic en "Actualizar" en la pestaña Resumen para extraer entidades de tu aventura!',
+      updateHint: '¡Haz clic en "Actualizar" en la pestaña Resumen para extraer sospechosos y pistas de tu investigación!',
       suspect: 'Sospechoso',
       investigator: 'Investigador',
       place: 'Lugar',
@@ -1425,13 +1425,13 @@ export const translations: Record<Language, Translations> = {
     },
 
     chat: {
-      messagePlaceholder: 'Escribe tu acción o tirada de dados...',
+      messagePlaceholder: 'Describe tu acción de investigación...',
       aiThinking: 'IA está pensando...',
       suggestedActions: 'Acciones Sugeridas',
       rolled: 'Tiró',
       rollResult: 'Tirada {notation}: {result}',
       dc: 'CD',
-      adventureBegins: 'Tu aventura comienza...',
+      adventureBegins: 'Tu investigación comienza...',
       firstActionPrompt: 'Describe tu primera acción abajo',
       narratorTyping: 'NARRADOR · escribiendo...',
       narratorThinking: 'Narrador está pensando',
@@ -1516,8 +1516,8 @@ export const translations: Record<Language, Translations> = {
     },
 
     apiKeySetup: {
-      welcome: '¡Bienvenido a SoloRPG!',
-      intro: 'Para comenzar tu aventura, necesitas configurar tu clave de API del proveedor de IA.',
+      welcome: '¡Bienvenido a Solo Detective!',
+      intro: 'Para comenzar a investigar, necesitas configurar tu clave de API del proveedor de IA.',
       introPrivacy: 'Tu clave de API se almacena localmente en tu navegador y nunca se envía a ningún lugar excepto directamente a la API del proveedor.',
       aiProvider: 'Proveedor de IA',
       anthropicKey: 'Clave de API de Anthropic',

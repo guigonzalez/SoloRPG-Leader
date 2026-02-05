@@ -8,16 +8,19 @@
 /* Layout */
 #root {
   height: 100vh;
+  height: 100dvh; /* Dynamic viewport for mobile browsers */
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0; /* Prevent flex overflow */
 }
 
 .app-container {
   display: flex;
   flex: 1;
   overflow: hidden;
-  min-height: 0; /* Important: allows flex children to shrink below content size */
+  min-height: 0;
+  min-width: 0;
 }
 
 .main-content {
@@ -25,7 +28,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 0; /* Important: allows flex children to shrink */
+  min-height: 0;
+  min-width: 0; /* Allow shrinking below content */
 }
 
 /* Campaign List Page - scrollable layout */
@@ -41,7 +45,9 @@
 .campaign-list-page .campaign-list-scroll {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
+  min-width: 0;
   padding: var(--spacing-md) 0;
 }
 
@@ -50,9 +56,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
-  padding: var(--spacing-xl) 0;
+  padding: var(--spacing-xl) var(--spacing-md);
   max-width: 720px;
   margin: 0 auto;
+  width: 100%;
+  min-width: 0;
 }
 
 .landing-hero-content {
@@ -194,7 +202,7 @@
 /* Campaign List */
 .campaign-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: var(--spacing-md);
   padding: var(--spacing-md) 0;
 }
@@ -290,6 +298,7 @@
   flex-wrap: wrap;
   gap: var(--spacing-md);
   align-items: center;
+  min-width: 0;
 }
 
 .preset-search-input {
@@ -299,7 +308,8 @@
   background-color: var(--color-bg-tertiary);
   border: var(--border-width) solid var(--color-border);
   color: var(--color-text-primary);
-  min-width: 200px;
+  min-width: 0;
+  flex: 1 1 200px;
 }
 
 .preset-search-input:focus {
@@ -328,6 +338,7 @@
   font-size: var(--font-size-md) !important;
   margin-top: var(--spacing-xs);
   font-weight: bold;
+  min-height: 44px; /* Touch target */
 }
 
 /* Campaign Create Page */
@@ -359,12 +370,16 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  min-height: 0; /* Important: allows flex children to shrink */
+  min-height: 0;
+  min-width: 0;
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  min-width: 0;
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
@@ -376,6 +391,8 @@
   border: var(--border-width) solid var(--color-border);
   max-width: 80%;
   word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .chat-message.user {
@@ -430,6 +447,7 @@
 .sidebar-tab {
   flex: 1;
   padding: var(--spacing-sm);
+  min-height: 44px;
   background-color: var(--color-bg-secondary);
   border: none;
   border-right: var(--border-width) solid var(--color-border);
@@ -438,6 +456,9 @@
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-tab:last-child {
@@ -536,6 +557,7 @@
   z-index: 1000;
   padding: var(--spacing-lg);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .page-modal {
@@ -647,7 +669,7 @@
 }
 
 .char-tab-content {
-  max-height: calc(90vh - 280px);
+  max-height: calc(90dvh - 280px);
   overflow-y: auto;
   padding-right: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
@@ -770,6 +792,10 @@
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 2px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Utility Classes */
@@ -881,9 +907,40 @@
     min-height: 44px;
   }
 
+  /* Preset campaigns: full-width search, stacked filters */
+  .preset-campaigns-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .preset-search-input {
+    width: 100%;
+    flex: none;
+  }
+
   /* Preset campaigns grid */
   .preset-campaign-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Landing hero: tighter padding on mobile */
+  .landing-hero {
+    padding: var(--spacing-md) 0;
+  }
+
+  /* Page overlay: safe area for modals on notched devices */
+  .page-overlay {
+    padding: calc(var(--spacing-lg) + env(safe-area-inset-top)) calc(var(--spacing-lg) + env(safe-area-inset-right)) calc(var(--spacing-lg) + env(safe-area-inset-bottom)) calc(var(--spacing-lg) + env(safe-area-inset-left));
+  }
+
+  .page-modal,
+  .page-modal-wide {
+    margin: var(--spacing-md);
+    max-width: min(600px, calc(100% - var(--spacing-lg)));
+  }
+
+  .page-modal-wide {
+    max-width: min(720px, calc(100% - var(--spacing-lg)));
   }
 
   /* Chat: messages full width, input stacked */
@@ -927,6 +984,39 @@
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Extra small screens (e.g. 320px) */
+@media (max-width: 400px) {
+  .retro-container {
+    padding: var(--spacing-sm);
+  }
+
+  .landing-hero-title {
+    font-size: clamp(22px, 6vw, 28px);
+  }
+
+  .landing-ascii {
+    font-size: 9px;
+  }
+
+  .campaign-card-btn,
+  .preset-play-btn {
+    min-height: 44px;
+  }
+
+  .char-tab {
+    padding: var(--spacing-sm);
+    font-size: 12px;
+  }
+
+  .char-btn-sm {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: var(--font-size-lg);
   }
 }
 
