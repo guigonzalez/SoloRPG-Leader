@@ -5,7 +5,7 @@ import { Card } from '../common/Card';
 import { validateCampaignTitle, validateCampaignTheme, validateCampaignTone } from '../../utils/validation';
 import { generateMysterySuggestion } from '../../services/ai/campaign-generator';
 import { t } from '../../services/i18n/use-i18n';
-import type { NewCampaign } from '../../types/models';
+import type { NewCampaign, Difficulty } from '../../types/models';
 
 interface CampaignCreateProps {
   onCreateCampaign: (campaign: NewCampaign) => Promise<void>;
@@ -19,6 +19,7 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
   const [style, setStyle] = useState('');
   const [theme, setTheme] = useState('');
   const [tone, setTone] = useState('');
+  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -63,6 +64,7 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
         system: 'Detective',
         theme,
         tone,
+        difficulty,
       });
     } catch (error) {
       setErrors({ submit: (error as Error).message });
@@ -147,6 +149,20 @@ export function CampaignCreate({ onCreateCampaign, onCancel }: CampaignCreatePro
                 placeholder={t('campaignCreation.tonePlaceholder')}
                 required
               />
+
+              <div className="form-group">
+                <label className="form-label">{t('campaignCreation.difficulty')}</label>
+                <select
+                  className="form-select"
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+                >
+                  <option value="easy">{t('campaignCreation.difficultyEasy')}</option>
+                  <option value="normal">{t('campaignCreation.difficultyNormal')}</option>
+                  <option value="hard">{t('campaignCreation.difficultyHard')}</option>
+                </select>
+              </div>
+
               {errors.tone && (
                 <div style={{ color: 'var(--color-accent)', fontSize: '12px', marginTop: '-8px', marginBottom: '8px' }}>
                   {errors.tone}

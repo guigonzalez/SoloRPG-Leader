@@ -31,6 +31,17 @@ export async function createCampaign(data: NewCampaign): Promise<Campaign> {
   return campaign;
 }
 
+/**
+ * Create campaign with fixed ID (for onboarding)
+ */
+export async function createCampaignWithId(campaign: Campaign): Promise<Campaign> {
+  const db = await getDB();
+  const existing = await db.get('campaigns', campaign.id);
+  if (existing) return existing;
+  await db.add('campaigns', campaign);
+  return campaign;
+}
+
 export async function updateCampaign(id: string, updates: Partial<NewCampaign>): Promise<Campaign> {
   const db = await getDB();
   const existing = await db.get('campaigns', id);

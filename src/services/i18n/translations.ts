@@ -38,6 +38,7 @@ export interface Translations {
     tagline: string;
     description: string;
     quickStartCta: string;
+    tutorialCta: string;
     createCustom: string;
     firstTimeHint: string;
   };
@@ -56,6 +57,10 @@ export interface Translations {
   presetCampaigns: {
     title: string;
     subtitle: string;
+    difficulty: string;
+    difficultyEasy: string;
+    difficultyNormal: string;
+    difficultyHard: string;
     searchPlaceholder: string;
     all: string;
     play: string;
@@ -104,6 +109,10 @@ export interface Translations {
     themePlaceholder: string;
     tone: string;
     tonePlaceholder: string;
+    difficulty: string;
+    difficultyEasy: string;
+    difficultyNormal: string;
+    difficultyHard: string;
     startCampaign: string;
     creating: string;
     generateFailed: string;
@@ -331,6 +340,7 @@ export interface Translations {
     saveAndStart: string;
     saving: string;
     changeLater: string;
+    tryTutorialFirst: string;
     enterKey: string;
     invalidClaudeFormat: string;
     invalidGeminiFormat: string;
@@ -355,6 +365,7 @@ export interface Translations {
     aiProvider: string;
     apiKey: string;
     apiKeyPlaceholder: string;
+    apiKeyConfiguredPlaceholder: string;
     theme: string;
     themeGreen: string;
     themeAmber: string;
@@ -416,6 +427,7 @@ export const translations: Record<Language, Translations> = {
       tagline: 'Your adventure, your rules.',
       description: 'Play tabletop RPGs solo with an AI narrator. Choose from 50 ready-to-play campaigns or create your own. Roll dice, make choices, and live the story.',
       quickStartCta: 'Start Playing Now',
+      tutorialCta: 'Tutorial (no API key needed)',
       createCustom: 'Create Custom Campaign',
       firstTimeHint: 'New here? Click above to jump into a ready-made adventure in seconds.',
     },
@@ -432,12 +444,16 @@ export const translations: Record<Language, Translations> = {
 
     presetCampaigns: {
       title: 'Quick Start Mysteries',
-      subtitle: '5 mystery scenarios. Click Play to create and start your investigation.',
+      subtitle: '20 mystery scenarios. Click Play to create and start your investigation.',
+      difficulty: 'Difficulty',
+      difficultyEasy: 'Easy (5 attempts)',
+      difficultyNormal: 'Normal (3 attempts)',
+      difficultyHard: 'Hard (2 attempts)',
       searchPlaceholder: 'Search campaigns...',
       all: 'All',
       play: 'Play',
       noResults: 'No campaigns match your search.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir' },
+      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir', cozy: 'Cozy', spy: 'Spy', supernatural: 'Supernatural', historical: 'Historical', locked: 'Locked Room', heist: 'Heist' },
       campaigns: PRESET_CAMPAIGNS_EN,
     },
 
@@ -478,6 +494,10 @@ export const translations: Record<Language, Translations> = {
       themePlaceholder: 'Describe the setting, victim, suspects...',
       tone: 'Tone',
       tonePlaceholder: 'e.g. Elegant, suspenseful, gritty',
+      difficulty: 'Difficulty',
+      difficultyEasy: 'Easy (5 attempts)',
+      difficultyNormal: 'Normal (3 attempts)',
+      difficultyHard: 'Hard (2 attempts)',
       startCampaign: 'Start Campaign',
       creating: 'Creating...',
       generateFailed: 'Failed to generate',
@@ -720,6 +740,7 @@ export const translations: Record<Language, Translations> = {
       saveAndStart: 'Save and Start Playing',
       saving: 'Saving...',
       changeLater: 'You can change your API key later in the settings',
+      tryTutorialFirst: 'Try Tutorial First (no API key needed)',
       enterKey: 'Please enter your API key',
       invalidClaudeFormat: 'Invalid API key format. It should start with "sk-ant-"',
       invalidGeminiFormat: 'Invalid Gemini API key format',
@@ -744,6 +765,7 @@ export const translations: Record<Language, Translations> = {
       aiProvider: 'AI Provider',
       apiKey: 'API Key',
       apiKeyPlaceholder: 'Enter your API key...',
+      apiKeyConfiguredPlaceholder: '•••••••• (configured - type to replace)',
       theme: 'Theme',
       themeGreen: '8-bit Green',
       themeAmber: '8-bit Amber',
@@ -803,6 +825,7 @@ export const translations: Record<Language, Translations> = {
       tagline: 'Sua aventura, suas regras.',
       description: 'Jogue RPGs de mesa sozinho com um narrador de IA. Escolha entre 50 campanhas prontas ou crie a sua. Role dados, faça escolhas e viva a história.',
       quickStartCta: 'Jogar Agora',
+      tutorialCta: 'Tutorial (sem chave de API)',
       createCustom: 'Criar Campanha Personalizada',
       firstTimeHint: 'Novo por aqui? Clique acima para começar uma aventura pronta em segundos.',
     },
@@ -819,12 +842,16 @@ export const translations: Record<Language, Translations> = {
 
     presetCampaigns: {
       title: 'Clique e Jogue',
-      subtitle: '50 campanhas prontas. Clique em Jogar para criar e começar na hora.',
+      subtitle: '20 cenários de mistério. Clique em Jogar para criar e começar sua investigação.',
+      difficulty: 'Dificuldade',
+      difficultyEasy: 'Fácil (5 tentativas)',
+      difficultyNormal: 'Normal (3 tentativas)',
+      difficultyHard: 'Difícil (2 tentativas)',
       searchPlaceholder: 'Buscar campanhas...',
       all: 'Todas',
       play: 'Jogar',
       noResults: 'Nenhuma campanha encontrada.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir' },
+      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir', cozy: 'Cozy', spy: 'Spy', supernatural: 'Supernatural', historical: 'Historical', locked: 'Locked Room', heist: 'Heist' },
       campaigns: PRESET_CAMPAIGNS_PT,
     },
 
@@ -865,6 +892,10 @@ export const translations: Record<Language, Translations> = {
       themePlaceholder: 'Descreva o cenário, vítima, suspeitos...',
       tone: 'Tom',
       tonePlaceholder: 'ex: Elegante, suspense, sombrio',
+      difficulty: 'Dificuldade',
+      difficultyEasy: 'Fácil (5 tentativas)',
+      difficultyNormal: 'Normal (3 tentativas)',
+      difficultyHard: 'Difícil (2 tentativas)',
       startCampaign: 'Iniciar Campanha',
       creating: 'Criando...',
       generateFailed: 'Falha ao gerar',
@@ -1107,6 +1138,7 @@ export const translations: Record<Language, Translations> = {
       saveAndStart: 'Salvar e Começar a Jogar',
       saving: 'Salvando...',
       changeLater: 'Você pode alterar sua chave de API depois nas configurações',
+      tryTutorialFirst: 'Experimentar Tutorial Primeiro (sem chave de API)',
       enterKey: 'Por favor, digite sua chave de API',
       invalidClaudeFormat: 'Formato de chave inválido. Deve começar com "sk-ant-"',
       invalidGeminiFormat: 'Formato de chave do Gemini inválido',
@@ -1131,6 +1163,7 @@ export const translations: Record<Language, Translations> = {
       aiProvider: 'Provedor de IA',
       apiKey: 'Chave da API',
       apiKeyPlaceholder: 'Digite sua chave de API...',
+      apiKeyConfiguredPlaceholder: '•••••••• (configurada - digite para substituir)',
       theme: 'Tema',
       themeGreen: '8-bit Verde',
       themeAmber: '8-bit Âmbar',
@@ -1190,6 +1223,7 @@ export const translations: Record<Language, Translations> = {
       tagline: 'Tu aventura, tus reglas.',
       description: 'Juega RPGs de mesa en solitario con un narrador de IA. Elige entre 50 campañas listas o crea la tuya. Tira dados, toma decisiones y vive la historia.',
       quickStartCta: 'Jugar Ahora',
+      tutorialCta: 'Tutorial (sin clave de API)',
       createCustom: 'Crear Campaña Personalizada',
       firstTimeHint: '¿Nuevo aquí? Haz clic arriba para empezar una aventura lista en segundos.',
     },
@@ -1206,12 +1240,16 @@ export const translations: Record<Language, Translations> = {
 
     presetCampaigns: {
       title: 'Jugar Rápido',
-      subtitle: '50 campañas predefinidas. Haz clic en Jugar para crear y empezar al instante.',
+      subtitle: '20 escenarios de misterio. Haz clic en Jugar para crear y empezar tu investigación.',
+      difficulty: 'Dificultad',
+      difficultyEasy: 'Fácil (5 intentos)',
+      difficultyNormal: 'Normal (3 intentos)',
+      difficultyHard: 'Difícil (2 intentos)',
       searchPlaceholder: 'Buscar campañas...',
       all: 'Todas',
       play: 'Jugar',
       noResults: 'No hay campañas que coincidan.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir' },
+      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir', cozy: 'Cozy', spy: 'Spy', supernatural: 'Supernatural', historical: 'Historical', locked: 'Locked Room', heist: 'Heist' },
       campaigns: PRESET_CAMPAIGNS_ES,
     },
 
@@ -1252,6 +1290,10 @@ export const translations: Record<Language, Translations> = {
       themePlaceholder: 'Describe el escenario, víctima, sospechosos...',
       tone: 'Tono',
       tonePlaceholder: 'ej: Elegante, suspense, oscuro',
+      difficulty: 'Dificultad',
+      difficultyEasy: 'Fácil (5 intentos)',
+      difficultyNormal: 'Normal (3 intentos)',
+      difficultyHard: 'Difícil (2 intentos)',
       startCampaign: 'Iniciar Campaña',
       creating: 'Creando...',
       generateFailed: 'Error al generar',
@@ -1494,6 +1536,7 @@ export const translations: Record<Language, Translations> = {
       saveAndStart: 'Guardar y Empezar a Jugar',
       saving: 'Guardando...',
       changeLater: 'Puedes cambiar tu clave de API más tarde en la configuración',
+      tryTutorialFirst: 'Probar Tutorial Primero (sin clave de API)',
       enterKey: 'Por favor, ingresa tu clave de API',
       invalidClaudeFormat: 'Formato de clave inválido. Debe comenzar con "sk-ant-"',
       invalidGeminiFormat: 'Formato de clave de Gemini inválido',
@@ -1518,6 +1561,7 @@ export const translations: Record<Language, Translations> = {
       aiProvider: 'Proveedor de IA',
       apiKey: 'Clave de API',
       apiKeyPlaceholder: 'Ingresa tu clave de API...',
+      apiKeyConfiguredPlaceholder: '•••••••• (configurada - escribe para reemplazar)',
       theme: 'Tema',
       themeGreen: '8-bit Verde',
       themeAmber: '8-bit Ámbar',

@@ -11,12 +11,14 @@ import { useUIStore } from './store/ui-store';
 import { useMessages } from './hooks/useMessages';
 import { useAI } from './hooks/useAI';
 import { hasApiKey } from './services/storage/api-key-storage';
+import { getOrCreateOnboardingCampaign } from './services/onboarding/onboarding-campaign';
 import { extractMemory } from './services/ai/memory-extractor';
 import { t } from './services/i18n/use-i18n';
 import * as recapRepo from './services/storage/recap-repo';
 import * as entityRepo from './services/storage/entity-repo';
 import * as factRepo from './services/storage/fact-repo';
 import type { Campaign, Recap, Entity, SuggestedAction } from './types/models';
+import { MAX_ATTEMPTS_BY_DIFFICULTY } from './services/presets/preset-campaigns';
 import './styles/main.css';
 
 function App() {
@@ -28,7 +30,7 @@ function App() {
   const campaignInitializedRef = useRef<string | null>(null);
   const lastAutoRecapMessageCountRef = useRef<number>(0);
 
-  const { activeCampaignId, setActiveCampaign, getActiveCampaign, updateCampaign } = useCampaignStore();
+  const { activeCampaignId, setActiveCampaign, getActiveCampaign, updateCampaign, loadCampaigns } = useCampaignStore();
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const { isAIResponding, streamedContent, suggestedActions, messagesLoaded, loadedMessageCount, loadGeneration } = useChatStore();
   const activeCampaign = getActiveCampaign();
@@ -40,75 +42,14 @@ function App() {
     setShowApiKeySetup(!hasApiKey());
   }, []);
 
-  useEffect(() => {
-    const loadMemory = async () => {
-      if (!activeCampaignId) {
-        setRecap(null);
-        setEntities([]);
-        return;
-      }
-
-      try {
-        const loadedRecap = await recapRepo.getRecapByCampaign(activeCampaignId);
-        const loadedEntities = await entityRepo.getEntitiesByCampaign(activeCampaignId);
-
-        setRecap(loadedRecap || null);
-        setEntities(loadedEntities);
-      } catch (err) {
-        console.error('Failed to load memory:', err);
-      }
-    };
-
-    loadMemory();
-  }, [activeCampaignId]);
-
-  useEffect(() => {
-    campaignInitializedRef.current = null;
-    lastAutoRecapMessageCountRef.current = 0;
-  }, [activeCampaignId]);
-
-  useEffect(() => {
-    if (!activeCampaignId || !messagesLoaded) {
-      return;
-    }
-
-    if (campaignInitializedRef.current === activeCampaignId) {
-      return;
-    }
-
-    const initCampaign = async () => {
-      campaignInitializedRef.current = activeCampaignId;
-
-      if (loadedMessageCount === 0 && !isAIResponding) {
-        try {
-          await startCampaign();
-        } catch (err) {
-          console.error('Failed to start campaign:', err);
-        }
-      }
-    };
-
-    initCampaign();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadGeneration]);
-
-  const handleApiKeySetupComplete = () => {
-    setShowApiKeySetup(false);
-    window.location.reload();
-  };
-
-  if (showApiKeySetup) {
-    return <ApiKeySetup onComplete={handleApiKeySetupComplete} />;
-  }
-
-  const handleSelectCampaign = (campaign: Campaign) => {
+  const handleSelectCampaign = useCallback((campaign: Campaign) => {
     setActiveCampaign(campaign.id);
-  };
+  }, [setActiveCampaign]);
 
-  const handleBackToCampaigns = () => {
+  const handleBackToCampaigns = useCallback(() => {
     campaignInitializedRef.current = null;
     setActiveCampaign(null);
-  };
+  }, [setActiveCampaign]);
 
   const runMemoryExtraction = useCallback(
     async (showAlert = false) => {
@@ -173,6 +114,75 @@ function App() {
   const handleUpdateRecap = useCallback(() => runMemoryExtraction(true), [runMemoryExtraction]);
 
   useEffect(() => {
+    const loadMemory = async () => {
+      if (!activeCampaignId) {
+        setRecap(null);
+        setEntities([]);
+        return;
+      }
+
+      try {
+        const loadedRecap = await recapRepo.getRecapByCampaign(activeCampaignId);
+        const loadedEntities = await entityRepo.getEntitiesByCampaign(activeCampaignId);
+
+        setRecap(loadedRecap || null);
+        setEntities(loadedEntities);
+      } catch (err) {
+        console.error('Failed to load memory:', err);
+      }
+    };
+
+    loadMemory();
+  }, [activeCampaignId]);
+
+  useEffect(() => {
+    campaignInitializedRef.current = null;
+    lastAutoRecapMessageCountRef.current = 0;
+  }, [activeCampaignId]);
+
+  useEffect(() => {
+    if (!activeCampaignId || !messagesLoaded) {
+      return;
+    }
+
+    if (campaignInitializedRef.current === activeCampaignId) {
+      return;
+    }
+
+    const initCampaign = async () => {
+      campaignInitializedRef.current = activeCampaignId;
+
+      if (loadedMessageCount === 0 && !isAIResponding) {
+        try {
+          await startCampaign();
+        } catch (err) {
+          console.error('Failed to start campaign:', err);
+        }
+      }
+    };
+
+    initCampaign();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadGeneration]);
+
+  const handleApiKeySetupComplete = () => {
+    setShowApiKeySetup(false);
+    window.location.reload();
+  };
+
+  const handleTryTutorial = async () => {
+    try {
+      const campaign = await getOrCreateOnboardingCampaign();
+      await loadCampaigns();
+      setActiveCampaign(campaign.id);
+      setShowApiKeySetup(false);
+    } catch (err) {
+      console.error('Failed to start tutorial:', err);
+      alert('Failed to start tutorial: ' + (err as Error).message);
+    }
+  };
+
+  useEffect(() => {
     if (!activeCampaignId || !messagesLoaded || messages.length === 0) return;
 
     const count = messages.length;
@@ -181,6 +191,15 @@ function App() {
       runMemoryExtraction(false);
     }
   }, [activeCampaignId, messagesLoaded, messages.length, runMemoryExtraction]);
+
+  if (showApiKeySetup) {
+    return (
+      <ApiKeySetup
+        onComplete={handleApiKeySetupComplete}
+        onTryTutorial={handleTryTutorial}
+      />
+    );
+  }
 
   const handleSelectAction = async (action: SuggestedAction) => {
     useChatStore.getState().setSuggestedActions([]);
@@ -286,6 +305,7 @@ function App() {
         recap={recap}
         entities={entities}
         campaignId={activeCampaignId}
+        maxArrestAttempts={activeCampaign?.difficulty ? MAX_ATTEMPTS_BY_DIFFICULTY[activeCampaign.difficulty] : 3}
         notes={activeCampaign?.notes ?? ''}
         onSaveNotes={handleSaveNotes}
         onEndSession={handleEndSession}

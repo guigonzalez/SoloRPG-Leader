@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useCampaignStore } from '../../store/campaign-store';
 import { PRESET_CAMPAIGNS, presetToNewCampaign, type PresetCampaignMeta } from '../../services/presets/preset-campaigns';
 import { t, useTranslations } from '../../services/i18n/use-i18n';
-import type { Campaign } from '../../types/models';
+import type { Campaign, Difficulty } from '../../types/models';
 
 interface PresetCampaignsProps {
   onSelectCampaign: (campaign: Campaign) => void;
@@ -15,6 +15,7 @@ export function PresetCampaigns({ onSelectCampaign, onBack }: PresetCampaignsPro
   const [filterTag, setFilterTag] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [creatingId, setCreatingId] = useState<string | null>(null);
+  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
 
   const tagLabels = translations.presetCampaigns.tags;
   const campaigns = translations.presetCampaigns.campaigns;
@@ -50,7 +51,7 @@ export function PresetCampaigns({ onSelectCampaign, onBack }: PresetCampaignsPro
     try {
       const c = campaigns[preset.id];
       if (!c) return;
-      const resolved = { ...preset, title: c.title, theme: c.theme, tone: c.tone };
+      const resolved = { ...preset, title: c.title, theme: c.theme, tone: c.tone, difficulty };
       const campaign = await createCampaign(presetToNewCampaign(resolved));
       onSelectCampaign(campaign);
     } catch (err) {
@@ -72,6 +73,20 @@ export function PresetCampaigns({ onSelectCampaign, onBack }: PresetCampaignsPro
         <div className="preset-campaigns-intro">
           <h1 className="preset-campaigns-title">{t('presetCampaigns.title')}</h1>
           <p className="preset-campaigns-subtitle">{t('presetCampaigns.subtitle')}</p>
+        </div>
+
+        <div className="form-group" style={{ marginBottom: '12px' }}>
+          <label className="form-label" style={{ fontSize: '12px', marginBottom: '4px' }}>{t('presetCampaigns.difficulty')}</label>
+          <select
+            className="form-select"
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+            style={{ fontSize: '12px', padding: '6px 10px' }}
+          >
+            <option value="easy">{t('presetCampaigns.difficultyEasy')}</option>
+            <option value="normal">{t('presetCampaigns.difficultyNormal')}</option>
+            <option value="hard">{t('presetCampaigns.difficultyHard')}</option>
+          </select>
         </div>
 
         {/* Search & Filters */}

@@ -6,9 +6,10 @@ import { t } from '../../services/i18n/use-i18n';
 
 interface ApiKeySetupProps {
   onComplete: () => void;
+  onTryTutorial?: () => void;
 }
 
-export function ApiKeySetup({ onComplete }: ApiKeySetupProps) {
+export function ApiKeySetup({ onComplete, onTryTutorial }: ApiKeySetupProps) {
   const [apiKey, setApiKey] = useState('');
   const [provider, setProvider] = useState<AIProvider>('claude');
   const [error, setError] = useState<string | null>(null);
@@ -150,6 +151,22 @@ export function ApiKeySetup({ onComplete }: ApiKeySetupProps) {
             <div className="page-hero-tagline" style={{ marginTop: '12px', fontSize: '11px', textAlign: 'center' }}>
               {t('apiKeySetup.changeLater')}
             </div>
+
+            {onTryTutorial && (
+              <button
+                type="button"
+                className="retro-button"
+                onClick={onTryTutorial}
+                style={{
+                  width: '100%',
+                  marginTop: '16px',
+                  borderStyle: 'dashed',
+                  fontSize: '12px',
+                }}
+              >
+                {t('apiKeySetup.tryTutorialFirst')}
+              </button>
+            )}
           </form>
         </Card>
       </div>

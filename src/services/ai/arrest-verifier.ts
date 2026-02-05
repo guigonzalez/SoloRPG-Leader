@@ -2,6 +2,7 @@ import { getClaudeClient } from './claude-client';
 import { getGeminiClient } from './gemini-client';
 import { getAIProvider } from '../storage/api-key-storage';
 import { getLanguage } from '../storage/settings-storage';
+import { ONBOARDING_CAMPAIGN_ID } from '../onboarding/onboarding-content';
 import type { MysteryAnswer } from '../../types/models';
 
 export interface ArrestGuess {
@@ -19,12 +20,46 @@ export interface ArrestVerificationResult {
  * Ask the AI to verify the player's arrest guess against the secret answer.
  * The AI acts as judge and generates appropriate narrative (victory or penalty).
  */
+function doFallbackVerification(
+  secret: MysteryAnswer,
+  guess: ArrestGuess,
+  attemptsRemaining: number,
+  lang: string
+): ArrestVerificationResult {
+  const normalized = (s: string) => s.toLowerCase().trim().replace(/\s+/g, ' ');
+  const criminalMatch = normalized(guess.criminal).includes(normalized(secret.criminal)) ||
+    normalized(secret.criminal).includes(normalized(guess.criminal));
+  const weaponMatch = normalized(guess.weapon).includes(normalized(secret.weapon)) ||
+    normalized(secret.weapon).includes(normalized(guess.weapon));
+  const motiveMatch = normalized(guess.motive).includes(normalized(secret.motive)) ||
+    normalized(secret.motive).includes(normalized(guess.motive));
+
+  const correct = criminalMatch && weaponMatch && motiveMatch;
+
+  const fallbackNarrative = correct
+    ? (lang === 'pt' ? 'Você acertou! O culpado é preso e o caso é encerrado.' :
+        lang === 'es' ? '¡Correcto! El culpable es arrestado y el caso se cierra.' :
+        'You got it right! The culprit is arrested and the case is closed.')
+    : (lang === 'pt' ? `Sua acusação estava incorreta. ${attemptsRemaining > 0 ? `Você tem ${attemptsRemaining} tentativa(s) restante(s).` : 'O criminoso escapou. O caso permanece em aberto.'}` :
+        lang === 'es' ? `Tu acusación era incorrecta. ${attemptsRemaining > 0 ? `Te quedan ${attemptsRemaining} intento(s).` : 'El criminal escapó. El caso sigue abierto.'}` :
+        `Your accusation was wrong. ${attemptsRemaining > 0 ? `You have ${attemptsRemaining} attempt(s) remaining.` : 'The criminal has escaped. The case remains unsolved.'}`);
+
+  return { correct, narrative: fallbackNarrative };
+}
+
 export async function verifyArrest(
   secret: MysteryAnswer,
   guess: ArrestGuess,
   attemptsRemaining: number,
   languageName: string
 ): Promise<ArrestVerificationResult> {
+  const lang = getLanguage();
+
+  // Onboarding: use direct comparison, no AI
+  if (secret.campaignId === ONBOARDING_CAMPAIGN_ID) {
+    return doFallbackVerification(secret, guess, attemptsRemaining, lang);
+  }
+
   const provider = getAIProvider();
   const client = provider === 'gemini' ? getGeminiClient() : getClaudeClient();
 
@@ -74,26 +109,6 @@ Respond with ONLY valid JSON (no markdown, no code blocks):
     return parsed;
   } catch (error) {
     console.error('Arrest verification failed:', error);
-    // Fallback: do simple string comparison
-    const normalized = (s: string) => s.toLowerCase().trim().replace(/\s+/g, ' ');
-    const criminalMatch = normalized(guess.criminal).includes(normalized(secret.criminal)) ||
-      normalized(secret.criminal).includes(normalized(guess.criminal));
-    const weaponMatch = normalized(guess.weapon).includes(normalized(secret.weapon)) ||
-      normalized(secret.weapon).includes(normalized(guess.weapon));
-    const motiveMatch = normalized(guess.motive).includes(normalized(secret.motive)) ||
-      normalized(secret.motive).includes(normalized(guess.motive));
-
-    const correct = criminalMatch && weaponMatch && motiveMatch;
-
-    const lang = getLanguage();
-    const fallbackNarrative = correct
-      ? (lang === 'pt' ? 'Você acertou! O culpado é preso e o caso é encerrado.' :
-          lang === 'es' ? '¡Correcto! El culpable es arrestado y el caso se cierra.' :
-          'You got it right! The culprit is arrested and the case is closed.')
-      : (lang === 'pt' ? `Sua acusação estava incorreta. ${attemptsRemaining > 0 ? `Você tem ${attemptsRemaining} tentativa(s) restante(s).` : 'O criminoso escapou. O caso permanece em aberto.'}` :
-          lang === 'es' ? `Tu acusación era incorrecta. ${attemptsRemaining > 0 ? `Te quedan ${attemptsRemaining} intento(s).` : 'El criminal escapó. El caso sigue abierto.'}` :
-          `Your accusation was wrong. ${attemptsRemaining > 0 ? `You have ${attemptsRemaining} attempt(s) remaining.` : 'The criminal has escaped. The case remains unsolved.'}`);
-
-    return { correct, narrative: fallbackNarrative };
+    return doFallbackVerification(secret, guess, attemptsRemaining, lang);
   }
 }

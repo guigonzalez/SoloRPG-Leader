@@ -133,7 +133,13 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                 className="retro-input"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder={provider === 'claude' ? 'sk-ant-api03-...' : 'AIza...'}
+                placeholder={
+                  currentKey
+                    ? t('settings.apiKeyConfiguredPlaceholder')
+                    : provider === 'claude'
+                      ? 'sk-ant-api03-...'
+                      : 'AIza...'
+                }
                 style={{ fontFamily: 'monospace' }}
               />
             </div>

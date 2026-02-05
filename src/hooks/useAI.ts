@@ -8,7 +8,14 @@ import * as factRepo from '../services/storage/fact-repo';
 import { deleteMessagesAfterTimestamp } from '../services/storage/message-repo';
 import { generateMystery, toMysteryAnswer } from '../services/ai/mystery-generator';
 import { saveMysteryAnswer } from '../services/storage/mystery-answer-repo';
+import { getLanguage } from '../services/storage/settings-storage';
 import { t } from '../services/i18n/use-i18n';
+import { isOnboardingCampaign } from '../services/onboarding/onboarding-campaign';
+import {
+  getOnboardingContent,
+  getScriptedResponse,
+  getOnboardingFallbackResponse,
+} from '../services/onboarding/onboarding-content';
 import type { NewMessage } from '../types/models';
 
 /**
@@ -46,6 +53,27 @@ export function useAI(campaignId: string | null) {
       setAIResponding(true);
       setStreamedContent('');
       setError(null);
+
+      // Onboarding: use scripted responses, no AI
+      if (isOnboardingCampaign(campaign)) {
+        const language = getLanguage();
+        const scripted = getScriptedResponse(content.trim(), language);
+        const responseContent = scripted
+          ? scripted.response
+          : getOnboardingFallbackResponse(language);
+
+        const aiMessage: NewMessage = {
+          campaignId,
+          role: 'ai',
+          content: responseContent,
+        };
+        const savedAIMessage = await messageRepo.createMessage(aiMessage);
+        addMessage(savedAIMessage);
+        setAIResponding(false);
+        setStreamedContent('');
+        setSuggestedActions(scripted?.suggestedActions ?? []);
+        return;
+      }
 
       const recap = await recapRepo.getRecapByCampaign(campaignId) || null;
       const entities = await entityRepo.getEntitiesByCampaign(campaignId);
@@ -112,8 +140,18 @@ export function useAI(campaignId: string | null) {
       setStreamedContent('');
       setError(null);
 
-      // Generate mystery (opening + secret answer)
-      const result = await generateMystery(campaign);
+      let result: { openingNarrative: string; secret: { criminal: string; weapon: string; motive: string } };
+
+      // Onboarding: use pre-written content, no AI
+      if (isOnboardingCampaign(campaign)) {
+        const content = getOnboardingContent(getLanguage());
+        result = {
+          openingNarrative: content.opening,
+          secret: content.secret,
+        };
+      } else {
+        result = await generateMystery(campaign);
+      }
 
       // Save secret answer for arrest verification (never shown to player)
       const mysteryAnswer = toMysteryAnswer(campaignId, result);
@@ -132,8 +170,14 @@ export function useAI(campaignId: string | null) {
       setAIResponding(false);
       setStreamedContent('');
 
-      // No suggested actions from mystery generator - AI will suggest on first player message
-      setSuggestedActions([]);
+      // Onboarding: show initial suggested actions
+      if (isOnboardingCampaign(campaign)) {
+        const content = getOnboardingContent(getLanguage());
+        const firstScript = content.scriptedResponses[0];
+        setSuggestedActions(firstScript?.suggestedActions ?? []);
+      } else {
+        setSuggestedActions([]);
+      }
     } catch (err) {
       console.error('Error starting campaign:', err);
       setError((err as Error).message);

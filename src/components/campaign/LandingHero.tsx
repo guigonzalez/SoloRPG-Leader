@@ -3,6 +3,7 @@ import { t } from '../../services/i18n/use-i18n';
 
 interface LandingHeroProps {
   onQuickStart: () => void;
+  onTutorial: () => void;
   onCreateCampaign: () => void;
   onImport: () => void;
   onSettings: () => void;
@@ -11,6 +12,7 @@ interface LandingHeroProps {
 
 export function LandingHero({
   onQuickStart,
+  onTutorial,
   onCreateCampaign,
   onImport,
   onSettings,
@@ -39,6 +41,13 @@ export function LandingHero({
           >
             {t('landing.quickStartCta')}
           </Button>
+          <button
+            className="retro-button landing-btn"
+            onClick={onTutorial}
+            style={{ borderStyle: 'dashed' }}
+          >
+            {t('landing.tutorialCta')}
+          </button>
           <div className="landing-hero-secondary">
             <button className="retro-button landing-btn" onClick={onCreateCampaign}>
               {t('landing.createCustom')}

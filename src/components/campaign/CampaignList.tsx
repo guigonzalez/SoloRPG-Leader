@@ -7,6 +7,7 @@ import { LandingHero } from './LandingHero';
 import { Loading } from '../common/Loading';
 import { SettingsModal } from '../common/SettingsModal';
 import { importCampaignFromFile } from '../../services/export/campaign-importer';
+import { getOrCreateOnboardingCampaign } from '../../services/onboarding/onboarding-campaign';
 import { t } from '../../services/i18n/use-i18n';
 import type { Campaign, NewCampaign } from '../../types/models';
 
@@ -15,7 +16,7 @@ interface CampaignListProps {
 }
 
 export function CampaignList({ onSelectCampaign }: CampaignListProps) {
-  const { campaigns, loading, loadCampaigns, createCampaign, deleteCampaign } = useCampaignStore();
+  const { campaigns, loading, loadCampaigns, createCampaign, deleteCampaign, setActiveCampaign } = useCampaignStore();
   const [showCreate, setShowCreate] = useState(false);
   const [showPresets, setShowPresets] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -37,6 +38,18 @@ export function CampaignList({ onSelectCampaign }: CampaignListProps) {
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleTutorial = async () => {
+    try {
+      const campaign = await getOrCreateOnboardingCampaign();
+      await loadCampaigns();
+      setActiveCampaign(campaign.id);
+      onSelectCampaign(campaign);
+    } catch (err) {
+      console.error('Failed to start tutorial:', err);
+      alert(t('errors.unknown') + ': ' + (err as Error).message);
+    }
   };
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +96,7 @@ export function CampaignList({ onSelectCampaign }: CampaignListProps) {
         <div className="retro-container campaign-list-container">
           <LandingHero
             onQuickStart={() => setShowPresets(true)}
+            onTutorial={handleTutorial}
             onCreateCampaign={() => setShowCreate(true)}
             onImport={handleImportClick}
             onSettings={() => setShowSettings(true)}

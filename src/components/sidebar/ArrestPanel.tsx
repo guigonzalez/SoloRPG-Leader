@@ -6,15 +6,14 @@ import * as messageRepo from '../../services/storage/message-repo';
 import { useChatStore } from '../../store/chat-store';
 import { t } from '../../services/i18n/use-i18n';
 
-const MAX_ATTEMPTS = 3;
-
 interface ArrestPanelProps {
   campaignId: string;
+  maxAttempts: number;
   onCaseSolved: (answer: { criminal: string; weapon: string; motive: string }) => void;
   onCaseFailed: (answer?: { criminal: string; weapon: string; motive: string }) => void;
 }
 
-export function ArrestPanel({ campaignId, onCaseSolved, onCaseFailed }: ArrestPanelProps) {
+export function ArrestPanel({ campaignId, maxAttempts, onCaseSolved, onCaseFailed }: ArrestPanelProps) {
   const [showModal, setShowModal] = useState(false);
   const [suspect, setSuspect] = useState('');
   const [weapon, setWeapon] = useState('');
@@ -34,7 +33,7 @@ export function ArrestPanel({ campaignId, onCaseSolved, onCaseFailed }: ArrestPa
     });
   }, [campaignId]);
 
-  const attemptsRemaining = MAX_ATTEMPTS - attemptsUsed;
+  const attemptsRemaining = maxAttempts - attemptsUsed;
   const canArrest = hasMystery && attemptsRemaining > 0 && !showModal;
 
   const handleSubmitArrest = async () => {
@@ -88,7 +87,7 @@ export function ArrestPanel({ campaignId, onCaseSolved, onCaseFailed }: ArrestPa
         const newAttemptsUsed = await incrementArrestAttempts(campaignId);
         setAttemptsUsed(newAttemptsUsed);
 
-        if (newAttemptsUsed >= MAX_ATTEMPTS) {
+        if (newAttemptsUsed >= maxAttempts) {
           const defeatContent = t('arrest.caseFailedMessage', {
             criminal: answer.criminal,
             weapon: answer.weapon,

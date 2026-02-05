@@ -17,12 +17,15 @@ export interface SolvedAnswer {
   motive: string;
 }
 
+export type Difficulty = 'easy' | 'normal' | 'hard';
+
 export interface Campaign {
   id: string;
   title: string;
   system: string;
   theme: string;
   tone: string;
+  difficulty?: Difficulty;
   notes?: string;
   status?: 'active' | 'solved' | 'failed';
   solvedAnswer?: SolvedAnswer;

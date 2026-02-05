@@ -10,6 +10,7 @@ interface SidebarProps {
   recap: Recap | null;
   entities: Entity[];
   campaignId: string;
+  maxArrestAttempts: number;
   notes: string;
   onSaveNotes: (notes: string) => Promise<void>;
   onEndSession: () => void;
@@ -25,6 +26,7 @@ export function Sidebar({
   recap,
   entities,
   campaignId,
+  maxArrestAttempts,
   notes,
   onSaveNotes,
   onEndSession,
@@ -111,6 +113,7 @@ export function Sidebar({
         {activePanel === 'arrest' && (
           <ArrestPanel
             campaignId={campaignId}
+            maxAttempts={maxArrestAttempts}
             onCaseSolved={onCaseSolved}
             onCaseFailed={onCaseFailed}
           />
