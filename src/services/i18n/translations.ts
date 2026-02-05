@@ -851,7 +851,7 @@ export const translations: Record<Language, Translations> = {
       all: 'Todas',
       play: 'Jogar',
       noResults: 'Nenhuma campanha encontrada.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir', cozy: 'Cozy', spy: 'Spy', supernatural: 'Supernatural', historical: 'Historical', locked: 'Locked Room', heist: 'Heist' },
+      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Expresso', rural: 'Rural', noir: 'Noir', cozy: 'Aconchegante', spy: 'Espionagem', supernatural: 'Sobrenatural', historical: 'Histórico', locked: 'Quarto Fechado', heist: 'Roubo' },
       campaigns: PRESET_CAMPAIGNS_PT,
     },
 
@@ -1249,7 +1249,7 @@ export const translations: Record<Language, Translations> = {
       all: 'Todas',
       play: 'Jugar',
       noResults: 'No hay campañas que coincidan.',
-      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Express', rural: 'Rural', noir: 'Noir', cozy: 'Cozy', spy: 'Spy', supernatural: 'Supernatural', historical: 'Historical', locked: 'Locked Room', heist: 'Heist' },
+      tags: { christie: 'Christie', holmes: 'Holmes', express: 'Expreso', rural: 'Rural', noir: 'Noir', cozy: 'Acogedor', spy: 'Espionaje', supernatural: 'Sobrenatural', historical: 'Histórico', locked: 'Habitación Cerrada', heist: 'Robo' },
       campaigns: PRESET_CAMPAIGNS_ES,
     },
 
