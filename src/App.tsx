@@ -26,7 +26,6 @@ function App() {
   const [showReignSummary, setShowReignSummary] = useState(false);
   const [recap, setRecap] = useState<Recap | null>(null);
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [isUpdatingRecap, setIsUpdatingRecap] = useState(false);
   const campaignInitializedRef = useRef<string | null>(null);
   const lastAutoRecapMessageCountRef = useRef<number>(0);
 
@@ -55,7 +54,6 @@ function App() {
     async (showAlert = false) => {
       if (!activeCampaignId || messages.length === 0) return;
 
-      setIsUpdatingRecap(true);
       try {
         const extracted = await extractMemory(messages);
 
@@ -73,7 +71,8 @@ function App() {
           await entityRepo.createEntity({
             campaignId: activeCampaignId,
             name: entity.name,
-            type: entity.type,
+            type: entity.type as import('./types/models').EntityType,
+            relation: entity.relation ?? 'neutral',
             blurb: entity.blurb,
           });
         }
@@ -104,14 +103,10 @@ function App() {
         if (showAlert) {
           alert(t('errors.failedToUpdateRecap') + ': ' + (err as Error).message);
         }
-      } finally {
-        setIsUpdatingRecap(false);
       }
     },
     [activeCampaignId, messages]
   );
-
-  const handleUpdateRecap = useCallback(() => runMemoryExtraction(true), [runMemoryExtraction]);
 
   useEffect(() => {
     const loadMemory = async () => {
@@ -226,11 +221,6 @@ function App() {
     }
   };
 
-  const handleSaveNotes = async (notes: string) => {
-    if (!activeCampaignId) return;
-    await updateCampaign(activeCampaignId, { notes });
-  };
-
   if (!activeCampaignId || !activeCampaign) {
     return <CampaignList onSelectCampaign={handleSelectCampaign} />;
   }
@@ -278,15 +268,10 @@ function App() {
         aria-hidden="true"
       />
       <Sidebar
-        recap={recap}
         entities={entities}
         campaignId={activeCampaignId}
-        notes={activeCampaign?.notes ?? ''}
         messageCount={messages.length}
-        onSaveNotes={handleSaveNotes}
         onEndSession={handleEndSession}
-        onUpdateRecap={handleUpdateRecap}
-        isUpdatingRecap={isUpdatingRecap}
         isOpen={sidebarOpen}
         onClose={toggleSidebar}
       />

@@ -73,11 +73,16 @@ export interface Recap {
 
 export type EntityType = 'country' | 'organization' | 'politician' | 'faction' | 'institution' | 'other' | 'character' | 'npc' | 'suspect' | 'investigator' | 'place' | 'evidence';
 
+/** Relation of entity to the player/leader: ally, internal enemy, external enemy */
+export type EntityRelation = 'ally' | 'internal_enemy' | 'external_enemy' | 'neutral';
+
 export interface Entity {
   id: string;
   campaignId: string;
   name: string;
   type: EntityType;
+  /** Relation to the leader: ally (friend), internal enemy, external enemy, or neutral */
+  relation?: EntityRelation;
   blurb: string;
   lastSeenAt: number;
 }
@@ -126,6 +131,19 @@ export interface Leader {
   updatedAt: number;
 }
 
+/** Timeline event type - marks key moments in the mandate journey */
+export type TimelineEventType = 'decision' | 'election_held' | 'election_postponed' | 'milestone' | 'crisis';
+
+export interface TimelineEvent {
+  id: string;
+  campaignId: string;
+  type: TimelineEventType;
+  label: string;
+  summary?: string;
+  impactSummary?: string;
+  createdAt: number;
+}
+
 /** Legacy Character - kept for compatibility during migration, can be removed */
 export interface Character {
   id: string;
@@ -165,4 +183,5 @@ export type NewEntity = Omit<Entity, 'id' | 'lastSeenAt'>;
 export type NewFact = Omit<Fact, 'id' | 'createdAt'>;
 export type NewRoll = Omit<Roll, 'id' | 'createdAt'>;
 export type NewLeader = Omit<Leader, 'id' | 'createdAt' | 'updatedAt'>;
+export type NewTimelineEvent = Omit<TimelineEvent, 'id' | 'createdAt'>;
 export type NewCharacter = Omit<Character, 'id' | 'createdAt' | 'updatedAt'>;

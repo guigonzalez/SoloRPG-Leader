@@ -126,6 +126,26 @@ export function parseXPAward(content: string): {
   return { cleanContent, xpAmount };
 }
 
+/** Election action for timeline: held = democratic, postponed = authoritarian */
+export type ElectionAction = 'held' | 'postponed';
+
+/**
+ * Parse election action from AI response (Leader game)
+ * Format: <election_action>held</election_action> or <election_action>postponed</election_action>
+ */
+export function parseElectionAction(content: string): {
+  cleanContent: string;
+  electionAction: ElectionAction | null;
+} {
+  const match = content.match(/<election_action>(held|postponed)<\/election_action>/i);
+  if (!match) {
+    return { cleanContent: content, electionAction: null };
+  }
+  const electionAction = match[1].toLowerCase() as ElectionAction;
+  const cleanContent = content.replace(/<election_action>(held|postponed)<\/election_action>/gi, '').trim();
+  return { cleanContent, electionAction };
+}
+
 /**
  * Parse suggested actions from AI response
  * Extracts action tags and returns clean content + actions
@@ -136,6 +156,7 @@ export function parseSuggestedActions(content: string): {
   impact?: import('../../types/models').DecisionImpact | null;
   nationImpact?: import('../../types/models').NationStateImpact | null;
   impactSummary?: string | null;
+  electionAction?: ElectionAction | null;
 } {
   const actions: SuggestedAction[] = [];
   let cleanContent = content;
@@ -145,12 +166,14 @@ export function parseSuggestedActions(content: string): {
 
   if (!actionsBlockMatch) {
     const impactResult = parseImpact(cleanContent);
+    const electionResult = parseElectionAction(impactResult.cleanContent);
     return {
-      cleanContent: impactResult.cleanContent,
+      cleanContent: electionResult.cleanContent,
       actions: [],
       impact: impactResult.impact,
       nationImpact: impactResult.nationImpact,
       impactSummary: impactResult.impactSummary,
+      electionAction: electionResult.electionAction ?? undefined,
     };
   }
 
@@ -180,13 +203,15 @@ export function parseSuggestedActions(content: string): {
 
   // Parse and remove <impact> tag (Leader game)
   const impactResult = parseImpact(cleanContent);
+  const electionResult = parseElectionAction(impactResult.cleanContent);
 
   return {
-    cleanContent: impactResult.cleanContent,
+    cleanContent: electionResult.cleanContent,
     actions,
     impact: impactResult.impact,
     nationImpact: impactResult.nationImpact,
     impactSummary: impactResult.impactSummary,
+    electionAction: electionResult.electionAction ?? undefined,
   };
 }
 

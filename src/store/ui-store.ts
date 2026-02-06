@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type ActivePanel = 'leader' | 'recap' | 'entities' | 'notes';
+type ActivePanel = 'leader' | 'timeline' | 'entities';
 
 interface UIStore {
   sidebarOpen: boolean;

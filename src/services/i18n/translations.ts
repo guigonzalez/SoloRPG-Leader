@@ -217,9 +217,20 @@ export interface Translations {
       endSession: string;
       character: string;
       leader: string;
+      timeline: string;
       recap: string;
       entities: string;
       notes: string;
+    };
+    timeline: {
+      title: string;
+      yearQuarter: string;
+      decision: string;
+      electionHeld: string;
+      electionPostponed: string;
+      milestone: string;
+      crisis: string;
+      empty: string;
     };
 
   // Arrest Panel (Voz de Prisão)
@@ -272,6 +283,7 @@ export interface Translations {
     institution: string;
     character: string;
     npc: string;
+    relation: { ally: string; internal_enemy: string; external_enemy: string; neutral: string };
   };
 
   // Notes Panel
@@ -657,9 +669,20 @@ export const translations: Record<Language, Translations> = {
       endSession: 'End Mandate',
       character: 'Character',
       leader: 'Leader',
+      timeline: 'Timeline',
       recap: 'Recap',
       entities: 'Entities',
       notes: 'Notes',
+    },
+    timeline: {
+      title: 'Mandate Journey',
+      yearQuarter: 'Year {year}, Q{quarter}',
+      decision: 'Decision',
+      electionHeld: 'Elections held',
+      electionPostponed: 'Elections postponed',
+      milestone: 'Milestone',
+      crisis: 'Crisis',
+      empty: 'No events yet. Your decisions will appear here.',
     },
 
     arrest: {
@@ -696,7 +719,7 @@ export const translations: Record<Language, Translations> = {
       title: 'Known Entities',
       noEntities: 'No entities discovered yet',
       empty: 'Countries, organizations, politicians and key figures will appear here...',
-      updateHint: 'Click "Update" in the Recap tab to extract entities from your mandate!',
+      updateHint: 'Entities are extracted automatically from your mandate.',
       suspect: 'Suspect',
       investigator: 'Investigator',
       place: 'Place',
@@ -709,6 +732,12 @@ export const translations: Record<Language, Translations> = {
       institution: 'Institution',
       character: 'Character',
       npc: 'Figure',
+      relation: {
+        ally: 'Ally',
+        internal_enemy: 'Internal enemy',
+        external_enemy: 'External enemy',
+        neutral: 'Neutral',
+      },
     },
 
     notesPanel: {
@@ -1109,9 +1138,20 @@ export const translations: Record<Language, Translations> = {
       endSession: 'Encerrar Mandato',
       character: 'Personagem',
       leader: 'Líder',
+      timeline: 'Linha do Tempo',
       recap: 'Resumo',
       entities: 'Entidades',
       notes: 'Anotações',
+    },
+    timeline: {
+      title: 'Jornada do Mandato',
+      yearQuarter: 'Ano {year}, T{quarter}',
+      decision: 'Decisão',
+      electionHeld: 'Eleições realizadas',
+      electionPostponed: 'Eleições adiadas',
+      milestone: 'Marco',
+      crisis: 'Crise',
+      empty: 'Nenhum evento ainda. Suas decisões aparecerão aqui.',
     },
 
     arrest: {
@@ -1148,7 +1188,7 @@ export const translations: Record<Language, Translations> = {
       title: 'Entidades Conhecidas',
       noEntities: 'Nenhuma entidade descoberta ainda',
       empty: 'Países, organizações, políticos e figuras-chave aparecerão aqui...',
-      updateHint: 'Clique em "Atualizar" na aba Resumo para extrair entidades do seu mandato!',
+      updateHint: 'Entidades são extraídas automaticamente do seu mandato.',
       suspect: 'Suspeito',
       investigator: 'Investigador',
       place: 'Local',
@@ -1161,6 +1201,12 @@ export const translations: Record<Language, Translations> = {
       institution: 'Instituição',
       character: 'Personagem',
       npc: 'Figura',
+      relation: {
+        ally: 'Aliado',
+        internal_enemy: 'Inimigo interno',
+        external_enemy: 'Inimigo externo',
+        neutral: 'Neutro',
+      },
     },
 
     notesPanel: {
@@ -1561,9 +1607,20 @@ export const translations: Record<Language, Translations> = {
       endSession: 'Finalizar Mandato',
       character: 'Personaje',
       leader: 'Líder',
+      timeline: 'Línea de Tiempo',
       recap: 'Resumen',
       entities: 'Entidades',
       notes: 'Notas',
+    },
+    timeline: {
+      title: 'Trayectoria del Mandato',
+      yearQuarter: 'Año {year}, T{quarter}',
+      decision: 'Decisión',
+      electionHeld: 'Elecciones realizadas',
+      electionPostponed: 'Elecciones pospuestas',
+      milestone: 'Hito',
+      crisis: 'Crisis',
+      empty: 'Aún no hay eventos. Tus decisiones aparecerán aquí.',
     },
 
     arrest: {
@@ -1599,8 +1656,8 @@ export const translations: Record<Language, Translations> = {
     entitiesPanel: {
       title: 'Entidades Conocidas',
       noEntities: 'No se han descubierto entidades aún',
-      empty: 'Sospechosos, investigadores, lugares y evidencias aparecerán aquí...',
-      updateHint: '¡Haz clic en "Actualizar" en la pestaña Resumen para extraer sospechosos y pistas de tu investigación!',
+      empty: 'Países, organizaciones, políticos y figuras clave aparecerán aquí...',
+      updateHint: 'Las entidades se extraen automáticamente de tu mandato.',
       suspect: 'Sospechoso',
       investigator: 'Investigador',
       place: 'Lugar',
@@ -1613,6 +1670,12 @@ export const translations: Record<Language, Translations> = {
       institution: 'Institución',
       character: 'Personaje',
       npc: 'Figura',
+      relation: {
+        ally: 'Aliado',
+        internal_enemy: 'Enemigo interno',
+        external_enemy: 'Enemigo externo',
+        neutral: 'Neutral',
+      },
     },
 
     notesPanel: {

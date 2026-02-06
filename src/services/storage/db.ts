@@ -1,6 +1,6 @@
 import { openDB } from 'idb';
 import type { DBSchema, IDBPDatabase } from 'idb';
-import type { Campaign, Message, Recap, Entity, Fact, Roll, Character, Leader } from '../../types/models';
+import type { Campaign, Message, Recap, Entity, Fact, Roll, Character, Leader, TimelineEvent } from '../../types/models';
 
 interface SoloRPGDB extends DBSchema {
   campaigns: { key: string; value: Campaign; indexes: { 'createdAt': number; 'updatedAt': number } };
@@ -11,10 +11,11 @@ interface SoloRPGDB extends DBSchema {
   rolls: { key: string; value: Roll; indexes: { 'campaignId': string; 'campaignCreatedAt': [string, number] } };
   characters: { key: string; value: Character; indexes: { 'campaignId': string } };
   leaders: { key: string; value: Leader; indexes: { 'campaignId': string } };
+  timelineEvents: { key: string; value: TimelineEvent; indexes: { 'campaignId': string; 'campaignCreatedAt': [string, number] } };
 }
 
 const DB_NAME = import.meta.env.VITE_DB_NAME || 'solo-rpg-leader-db';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 
 let dbInstance: IDBPDatabase<SoloRPGDB> | null = null;
 
@@ -50,6 +51,11 @@ export async function getDB(): Promise<IDBPDatabase<SoloRPGDB>> {
       if (oldVersion < 4) {
         const leaderStore = db.createObjectStore('leaders', { keyPath: 'id' });
         leaderStore.createIndex('campaignId', 'campaignId');
+      }
+      if (oldVersion < 5) {
+        const timelineStore = db.createObjectStore('timelineEvents', { keyPath: 'id' });
+        timelineStore.createIndex('campaignId', 'campaignId');
+        timelineStore.createIndex('campaignCreatedAt', ['campaignId', 'createdAt']);
       }
     },
   });

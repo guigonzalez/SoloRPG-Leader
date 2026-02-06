@@ -4,14 +4,17 @@ import { getAIProvider } from '../storage/api-key-storage';
 import { getLanguage, getLanguageName } from '../storage/settings-storage';
 import type { Message } from '../../types/models';
 
+import type { EntityRelation } from '../../types/models';
+
 /**
- * Memory extraction result
+ * Memory extraction result (Leader: nation leadership)
  */
 export interface ExtractedMemory {
   recap: string;
   entities: Array<{
     name: string;
-    type: 'suspect' | 'investigator' | 'place' | 'evidence' | 'faction' | 'other';
+    type: 'country' | 'organization' | 'politician' | 'faction' | 'institution' | 'other';
+    relation?: EntityRelation;
     blurb: string;
   }>;
   facts: Array<{
@@ -64,11 +67,11 @@ export async function extractMemory(messages: Message[]): Promise<ExtractedMemor
   const messagesToAnalyze = messages.slice(-MAX_MESSAGES_FOR_EXTRACTION);
   const transcript = buildConversationTranscript(messagesToAnalyze);
 
-  const systemPrompt = `You are a memory extraction assistant for a solo RPG detective game.
+  const systemPrompt = `You are a memory extraction assistant for a nation leadership solo RPG.
 
 Your task: Given the FULL conversation transcript, produce a single JSON with:
-1. **recap** - Brief summary of the investigation so far (max 600 chars), in ${languageName}
-2. **entities** - Suspects, investigators, places, evidence, factions (max 10). Use: suspect, investigator, place, evidence, faction, other
+1. **recap** - Brief summary of the mandate so far (max 600 chars), in ${languageName}
+2. **entities** - Countries, organizations, politicians, factions (max 10). Types: country, organization, politician, faction, institution, other. For each entity add **relation**: ally (friend/supporter), internal_enemy (opponent within the nation), external_enemy (foreign threat), or neutral
 3. **facts** - Key facts to remember, with sourceMessageId from the [id] tags (max 20)
 
 RULES:
@@ -77,15 +80,16 @@ RULES:
 - All text (recap, entity blurbs, facts) in ${languageName}
 - Facts must use the exact message ID from the [id] prefix
 - Always produce at least a recap, even from one message
+- relation is REQUIRED for each entity
 
 Respond with ONLY valid JSON, no markdown:
 {
   "recap": "string",
-  "entities": [{"name": "string", "type": "suspect|investigator|place|evidence|faction|other", "blurb": "string"}],
+  "entities": [{"name": "string", "type": "country|organization|politician|faction|institution|other", "relation": "ally|internal_enemy|external_enemy|neutral", "blurb": "string"}],
   "facts": [{"subjectEntityId": "string", "predicate": "string", "object": "string", "sourceMessageId": "string"}]
 }`;
 
-  const userMessage = `Analyze this conversation and produce the JSON (recap + entities + facts in one response):
+  const userMessage = `Analyze this nation leadership conversation and produce the JSON (recap + entities with relation + facts in one response):
 
 --- CONVERSAÇÃO ---
 

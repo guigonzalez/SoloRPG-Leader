@@ -6,6 +6,7 @@ import * as recapRepo from '../services/storage/recap-repo';
 import * as entityRepo from '../services/storage/entity-repo';
 import * as factRepo from '../services/storage/fact-repo';
 import * as leaderRepo from '../services/storage/leader-repo';
+import * as timelineEventRepo from '../services/storage/timeline-event-repo';
 import { deleteMessagesAfterTimestamp } from '../services/storage/message-repo';
 import { generateScenario } from '../services/ai/scenario-generator';
 import { getLanguage } from '../services/storage/settings-storage';
@@ -16,7 +17,7 @@ import {
   getScriptedResponse,
   getOnboardingFallbackResponse,
 } from '../services/onboarding/onboarding-content';
-import type { NewMessage } from '../types/models';
+import type { NewMessage, TimelineEventType } from '../types/models';
 
 /**
  * Hook to manage AI interactions for nation leadership narrative.
@@ -79,6 +80,19 @@ export function useAI(campaignId: string | null) {
       const entities = await entityRepo.getEntitiesByCampaign(campaignId);
       const facts = await factRepo.getFactsByCampaign(campaignId);
       const leader = await leaderRepo.getLeaderByCampaign(campaignId) ?? null;
+      const timelineEvents = await timelineEventRepo.getTimelineEventsByCampaign(campaignId);
+
+      const decisionCount = timelineEvents.length;
+      let lastElectionIdx = -1;
+      for (let i = timelineEvents.length - 1; i >= 0; i--) {
+        const evt = timelineEvents[i];
+        if (evt.type === 'election_held' || evt.type === 'election_postponed') {
+          lastElectionIdx = i;
+          break;
+        }
+      }
+      const decisionsSinceLastElection =
+        lastElectionIdx < 0 ? decisionCount : decisionCount - 1 - lastElectionIdx;
 
       const allMessages = [...messages, savedUserMessage];
 
@@ -90,6 +104,8 @@ export function useAI(campaignId: string | null) {
           entities,
           facts,
           leader,
+          decisionCount,
+          decisionsSinceLastElection,
         },
         (chunk) => appendStreamedContent(chunk)
       );
@@ -103,6 +119,25 @@ export function useAI(campaignId: string | null) {
             summary: response.impactSummary ?? undefined,
           }
         );
+
+        // Record timeline event for the journey
+        const eventType: TimelineEventType =
+          response.electionAction === 'held'
+            ? 'election_held'
+            : response.electionAction === 'postponed'
+              ? 'election_postponed'
+              : 'decision';
+        const rawLabel = content.trim();
+        const label: string =
+          (rawLabel.length > 60 ? rawLabel.slice(0, 57) + '...' : rawLabel) ||
+          (response.impactSummary ?? '') ||
+          t('timeline.decision');
+        await timelineEventRepo.createTimelineEvent({
+          campaignId,
+          type: eventType,
+          label,
+          impactSummary: response.impactSummary ?? undefined,
+        });
       }
 
       if (response.usedFallback) {

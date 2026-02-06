@@ -10,7 +10,9 @@ export function buildSystemPrompt(
   recap: Recap | null,
   entities: Entity[],
   facts: Fact[],
-  leader: Leader | null
+  leader: Leader | null,
+  decisionCount: number = 0,
+  decisionsSinceLastElection: number = 0
 ): string {
   const language = getLanguage();
   const languageName = getLanguageName(language);
@@ -44,6 +46,21 @@ ${campaign.era ? `- Era: ${campaign.era}` : ''}
 
 The player is the nation's leader. You present challenges and scenarios. The player decides how to respond. You narrate the consequences.
 
+## ELECTIONS – MANDATORY EVERY 4 YEARS
+
+**Time in power**: Each decision ≈ 1 quarter (3 months). 16 decisions = 4 years.
+
+**Current state**: ${decisionCount} decisions so far. Decisions since last election: ${decisionsSinceLastElection}.
+
+**MANDATORY ELECTION**: When decisionsSinceLastElection >= 16, you MUST present an election scenario. The constitution requires elections every 4 years. Do NOT offer other choices—only the election decision.
+
+When election is due (${decisionsSinceLastElection >= 16 ? 'NOW – YOU MUST present an election scenario' : `in ${16 - decisionsSinceLastElection} more decisions`}):
+
+1. **Hold elections** – Democratic path. Use governance="-6", stability="3", and add <election_action>held</election_action>.
+2. **Postpone or cancel elections** – Authoritarian path. Use governance="6", stability="-2", and add <election_action>postponed</election_action>.
+
+Not holding elections characterizes a dictatorial profile. Holding them reinforces democratic credentials.
+
 ## SIMPLICITY RULES (IMPORTANT)
 
 - **One situation per turn**: Present ONE simple, clear situation. Do not mix multiple crises or subplots.
@@ -74,6 +91,8 @@ Examples (notice the strong values):
 - Austerity cuts: economic="5", wellbeing="-6", inequality="5", stability="-3"
 - Crackdown on protests: governance="5" military="4", stability="3", internationalStanding="-5"
 - Welfare expansion: economic="-4", wellbeing="6", inequality="-4", economy="-2"
+- Hold elections: governance="-6", stability="3", add <election_action>held</election_action>
+- Postpone/cancel elections: governance="6", stability="-2", add <election_action>postponed</election_action>
 
 Current axes:
 ${axesDesc}
@@ -115,7 +134,9 @@ ${recap ? recap.summaryShort : 'The mandate has begun.'}`
     sections.push(
       `## KNOWN ENTITIES (Countries, Organizations, Figures)
 
-${entities.map((e) => `- ${e.name} (${e.type}): ${e.blurb}`).join('\n')}`
+Each entity has a relation: ally (friend/supporter), internal_enemy (domestic opponent), external_enemy (foreign threat), neutral.
+
+${entities.map((e) => `- ${e.name} (${e.type}${e.relation ? `, ${e.relation}` : ''}): ${e.blurb}`).join('\n')}`
     );
   }
 

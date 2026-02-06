@@ -1,35 +1,24 @@
-import { RecapPanel } from './RecapPanel';
 import { EntitiesPanel } from './EntitiesPanel';
 import { LeaderProfilePanel } from './LeaderProfilePanel';
-import { NotesPanel } from './NotesPanel';
+import { TimelinePanel } from './TimelinePanel';
 import { useUIStore } from '../../store/ui-store';
 import { t } from '../../services/i18n/use-i18n';
-import type { Recap, Entity } from '../../types/models';
+import type { Entity } from '../../types/models';
 
 interface SidebarProps {
-  recap: Recap | null;
   entities: Entity[];
   campaignId: string;
-  notes: string;
   messageCount?: number;
-  onSaveNotes: (notes: string) => Promise<void>;
   onEndSession: () => void;
-  onUpdateRecap: () => void;
-  isUpdatingRecap: boolean;
   isOpen?: boolean;
   onClose?: () => void;
 }
 
 export function Sidebar({
-  recap,
   entities,
   campaignId,
-  notes,
   messageCount = 0,
-  onSaveNotes,
   onEndSession,
-  onUpdateRecap,
-  isUpdatingRecap,
   isOpen = false,
   onClose,
 }: SidebarProps) {
@@ -86,10 +75,10 @@ export function Sidebar({
           {t('sidebar.leader')}
         </button>
         <button
-          className={`sidebar-tab ${activePanel === 'recap' ? 'active' : ''}`}
-          onClick={() => setActivePanel('recap')}
+          className={`sidebar-tab ${activePanel === 'timeline' ? 'active' : ''}`}
+          onClick={() => setActivePanel('timeline')}
         >
-          {t('sidebar.recap')}
+          {t('sidebar.timeline')}
         </button>
         <button
           className={`sidebar-tab ${activePanel === 'entities' ? 'active' : ''}`}
@@ -97,33 +86,16 @@ export function Sidebar({
         >
           {t('sidebar.entities')}
         </button>
-        <button
-          className={`sidebar-tab ${activePanel === 'notes' ? 'active' : ''}`}
-          onClick={() => setActivePanel('notes')}
-        >
-          {t('sidebar.notes')}
-        </button>
       </div>
 
       <div className="sidebar-content">
         {activePanel === 'leader' && (
           <LeaderProfilePanel campaignId={campaignId} refreshTrigger={messageCount} />
         )}
-        {activePanel === 'recap' && (
-          <RecapPanel
-            recap={recap}
-            onUpdateRecap={onUpdateRecap}
-            isUpdating={isUpdatingRecap}
-          />
+        {activePanel === 'timeline' && (
+          <TimelinePanel campaignId={campaignId} refreshTrigger={messageCount} />
         )}
         {activePanel === 'entities' && <EntitiesPanel entities={entities} />}
-        {activePanel === 'notes' && (
-          <NotesPanel
-            campaignId={campaignId}
-            initialNotes={notes}
-            onSaveNotes={onSaveNotes}
-          />
-        )}
       </div>
     </div>
   );

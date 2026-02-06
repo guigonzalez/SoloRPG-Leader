@@ -1,7 +1,7 @@
 import { getClaudeClient } from '../ai/claude-client';
 import { getGeminiClient } from '../ai/gemini-client';
 import { buildSystemPrompt } from '../ai/prompt-builder';
-import { assembleContext, parseSuggestedActions } from '../ai/context-assembler';
+import { assembleContext, parseSuggestedActions, type ElectionAction } from '../ai/context-assembler';
 import { getAIProvider } from '../storage/api-key-storage';
 import { getCurrentLanguage } from '../i18n/use-i18n';
 import type { Campaign, Message, Entity, Fact, Recap, SuggestedAction, Leader, DecisionImpact, NationStateImpact } from '../../types/models';
@@ -14,6 +14,10 @@ export interface GameEngineContext {
   entities: Entity[];
   facts: Fact[];
   leader?: Leader | null;
+  /** Total decisions with impact so far */
+  decisionCount?: number;
+  /** Decisions since last election (held or postponed). Election mandatory when >= 16 (4 years). */
+  decisionsSinceLastElection?: number;
 }
 
 export interface AIResponse {
@@ -22,6 +26,7 @@ export interface AIResponse {
   impact?: DecisionImpact | null;
   nationImpact?: NationStateImpact | null;
   impactSummary?: string | null;
+  electionAction?: ElectionAction | null;
   usedFallback?: boolean;
 }
 
@@ -74,7 +79,9 @@ export class GameEngine {
         context.recap,
         context.entities,
         context.facts,
-        context.leader ?? null
+        context.leader ?? null,
+        context.decisionCount ?? 0,
+        context.decisionsSinceLastElection ?? 0
       );
 
       const claudeMessages = assembleContext(context.messages);
@@ -86,7 +93,7 @@ export class GameEngine {
         onChunk
       );
 
-      const { cleanContent, actions, impact, nationImpact, impactSummary } = parseSuggestedActions(rawContent);
+      const { cleanContent, actions, impact, nationImpact, impactSummary, electionAction } = parseSuggestedActions(rawContent);
 
       return {
         content: cleanContent,
@@ -94,6 +101,7 @@ export class GameEngine {
         impact: impact ?? undefined,
         nationImpact: nationImpact ?? undefined,
         impactSummary: impactSummary ?? undefined,
+        electionAction: electionAction ?? undefined,
       };
     } catch (error) {
       console.error('AI response failed, using fallback:', error);
